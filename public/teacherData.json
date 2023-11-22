@@ -1,0 +1,23 @@
+[
+  {
+    "name": "Jane Smith",
+    "id": 789012,
+    "gender": "Female",
+    "qualification": "Master's in Education",
+    "area_covered": "SuburbA, SuburbB",
+    "location": "SuburbA",
+    "member_since": "2021-05-15",
+    "total_views": 800,
+    "expected_minimum_salary": 40,
+    "current_status": "Available",
+    "days_per_week": 4,
+    "preferred_tuition_style": "Group Classes",
+    "place_of_learning": "Student's Home",
+    "extra_facilities": ["Online Resources", "Interactive Learning"],
+    "preferred_class": "High School",
+    "preferred_subjects": ["Mathematics", "Physics"],
+    "preferred_time": "Evenings",
+    "preferred_area_to_teach": "SuburbA, SuburbB",
+    "educational_qualification": "Ph.D. in Education"
+  }
+]

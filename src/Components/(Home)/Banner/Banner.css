@@ -1,0 +1,7 @@
+.particles {
+  background-image: url("../../../../public//asset//banner.webp");
+  background-size: cover;
+}
+.welcomeText {
+  line-height: 4rem;
+}

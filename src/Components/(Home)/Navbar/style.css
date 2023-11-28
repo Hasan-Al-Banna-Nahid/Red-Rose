@@ -4,3 +4,6 @@
   background-clip: text;
   color: transparent;
 }
+.navbarBorder {
+  border-bottom: 1.5px solid teal !important;
+}

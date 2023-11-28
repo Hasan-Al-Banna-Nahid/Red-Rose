@@ -31,12 +31,6 @@ const SingleTutor = () => {
       }
     }
   };
-  // const handleTitleDescription = () => {
-  //   setTitleDescription((prev) => !prev);
-  // };
-  // const handleAreaCovered = () => {
-  //   setAreaCovered((prev) => !prev);
-  // };
 
   return (
     <div>

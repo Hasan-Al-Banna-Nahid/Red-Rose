@@ -53,3 +53,53 @@ async function run() {
   }
 }
 run().catch(console.dir);
+const mysql = require("mysql");
+
+// Create a connection to the MySQL database
+const connection = mysql.createConnection({
+  host: "127.0.0.1", // Usually 'localhost'
+  user: "root",
+  password: "",
+  database: "abclab_redrose",
+});
+
+// Connect to the database
+connection.connect((err) => {
+  if (err) {
+    console.error("Error connecting to MySQL:", err);
+    return;
+  }
+  console.log("Connected to MySQL database");
+});
+app.post("/api/sendUserData", (req, res) => {
+  const { name, email, password } = req.body;
+
+  // Insert user data into the "users" table
+  const sql = "INSERT INTO users (name, email,password) VALUES (?, ?, ?)";
+  connection.query(sql, [name, email, password], (error) => {
+    if (error) {
+      console.error("Error inserting user data:", error);
+      res.status(500).send("Internal Server Error");
+    } else {
+      res.status(200).send("User data inserted successfully");
+    }
+  });
+});
+
+// Perform a simple query
+// connection.query(
+//   "SELECT * FROM all_classes",
+
+//   (err, results, fields) => {
+//     if (err) {
+//       console.error("Error executing query:", err);
+//       return;
+//     }
+
+//     // Process the query results
+//     console.log("Query Results:", results);
+
+//     // Close the connection
+//     // connection.end();
+//   }
+// );

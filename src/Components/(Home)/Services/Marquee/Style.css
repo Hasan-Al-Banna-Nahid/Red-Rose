@@ -3,11 +3,11 @@
   position: relative;
 }
 .bgcolor {
-  background-image: linear-gradient(#cc009c, #ff0000b7);
+  background-image: linear-gradient(#cc009cd0, #ff0000d2);
 }
 .custom-card:hover {
   border-radius: 18px;
-  background-color: #15803d;
+  background-color: teal;
   color: white !important;
 }
 .text {

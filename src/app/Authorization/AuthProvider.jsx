@@ -36,27 +36,23 @@ const AuthProvider = ({ children }) => {
     setIsLoading(true);
     return signInWithEmailAndPassword(auth, email, password);
   };
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-      //   if (currentUser) {
-      //     axios
-      //       .post("https://vedhak-iamnahid591998-gmailcom.vercel.app/jwt", {
-      //         email: currentUser.email,
-      //       })
-      //       .then((res) => {
-      //         localStorage.setItem("access-token", res.data.token);
-      //         setIsLoading(false);
-      //       });
-      //   } else {
-      //     localStorage.removeItem("access-token");
-      //     setIsLoading(false);
-      //   }
+  const getToken = async () => {
+    return new Promise((resolve, reject) => {
+      const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+        if (currentUser) {
+          try {
+            const idToken = await currentUser.getIdToken();
+            resolve(idToken);
+          } catch (error) {
+            reject(error);
+          }
+        } else {
+          reject(new Error("User not authenticated"));
+        }
+        return unsubscribe();
+      });
     });
-    return () => {
-      return unsubscribe();
-    };
-  }, []);
+  };
   const updateUser = (name, photo) => {
     setIsLoading(true);
     return updateProfile(auth.currentUser, {
@@ -75,6 +71,7 @@ const AuthProvider = ({ children }) => {
     accessLogin,
     googleLogin,
     logOut,
+    getToken,
   };
   return (
     <AuthContext.Provider value={authInfo}>{children}</AuthContext.Provider>

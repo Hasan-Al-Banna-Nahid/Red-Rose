@@ -14,9 +14,14 @@ import { AuthContext } from "../AuthProvider";
 import { FaToggleOn, FaToggleOff } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import Navbar from "@/Components/(Home)/Navbar/Navbar";
+import useAxiosSecure from "@/Components/Hooks/useAxiosSecure";
+import withReactContent from "sweetalert2-react-content";
 
 const Login = () => {
+  const MySwal = withReactContent(Swal);
+
   const { user } = useContext(AuthContext);
+  const axiosSecure = useAxiosSecure();
   const [isShow, setIsShow] = useState(false);
   const handlePasswordShow = () => {
     setIsShow(!isShow);
@@ -24,6 +29,8 @@ const Login = () => {
   const location = useRouter();
   let from = location.state?.from?.pathname || "/";
   const navigate = useRouter();
+  const profile = useRouter();
+
   const { accessLogin, googleLogin } = useContext(AuthContext);
   const handleGoogleLogin = () => {
     googleLogin().then((result) => {
@@ -46,34 +53,35 @@ const Login = () => {
     const email = form.email.value;
     const password = form.password.value;
 
-    try {
-      const response = await fetch("http://localhost:8000/api/v2/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
+    axiosSecure
+      .post("/login", {
+        email: email,
+        password: password,
+      })
+      .then((res) => {
+        console.log(res.data.data);
+        console.log(res.data);
+        const newToken = res.data.data.token;
+        const userId = res.data.data.user.id;
+        console.log(userId);
+        localStorage.setItem("access-token", newToken);
+        if (res) {
+          MySwal.fire(res.data.message);
+          axiosSecure
+            .get(`/view-profile/${userId}`)
+            .then((profileResponse) => {
+              // Handle the profile response as needed
+              console.log("Profile Data:", profileResponse.data);
+
+              // Navigate to the profile route
+              profile.push(`http://localhost:8000/admin`);
+            })
+            .catch((profileError) => {
+              // Handle errors related to fetching the profile
+              console.error("Error fetching profile:", profileError);
+            });
+        }
       });
-
-      if (!response.ok) {
-        throw new Error("Login failed");
-      }
-
-      const data = await response.json();
-
-      // Assuming the token is present in the response as 'access_token'
-      const token = data.access_token;
-
-      // Store the token securely (localStorage, sessionStorage, or cookies)
-      localStorage.setItem("authToken", token);
-
-      // Redirect or perform any other action after successful login
-    } catch (error) {
-      console.error("Login error:", error);
-    }
 
     // fetch("http://localhost:8000/api/login", {
     //   method: "POST",
@@ -166,10 +174,10 @@ const Login = () => {
                   <Link href="/Authorization/Registration">
                     {" "}
                     New To Red Rose Please
-                    <a className="underline font-bold text-xl text-red-600">
+                    <p className="underline font-bold text-xl text-red-600">
                       {" "}
                       Sign Up
-                    </a>
+                    </p>
                   </Link>
                 </div>
               </div>

@@ -6,6 +6,7 @@ import { FaUserTie } from "react-icons/fa";
 import { BiRightTopArrowCircle } from "react-icons/bi";
 import "./Style.css";
 import { useState } from "react";
+
 const ServiceMarquee = () => {
   const [hoveredDiv1, setHoveredDiv1] = useState(false);
   const [hoveredDiv2, setHoveredDiv2] = useState(false);

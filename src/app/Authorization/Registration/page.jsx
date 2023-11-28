@@ -10,6 +10,8 @@ import { FaGoogle } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import Navbar from "@/Components/(Home)/Navbar/Navbar";
 
+import useAxiosSecure from "@/Components/Hooks/useAxiosSecure";
+
 const Registration = ({ customClassName }) => {
   //   const [isShow, setIsShow] = useState(false);
   //   const handlePasswordShow = () => {
@@ -24,6 +26,7 @@ const Registration = ({ customClassName }) => {
 
   const Location = useRouter();
   const navbar = useRouter();
+  const axiosSecure = useAxiosSecure();
 
   let from = Location.state?.from?.pathname || "/";
   const navigate = useRouter();
@@ -48,7 +51,7 @@ const Registration = ({ customClassName }) => {
     navigate(from, { replace: true });
   };
 
-  const onSubmit = (data, e) => {
+  const onSubmit = async (data, e) => {
     const form = e.target;
     const password = form.password.value;
     const confirmPassword = form.confirmPassword.value;
@@ -57,39 +60,34 @@ const Registration = ({ customClassName }) => {
       return;
     }
 
-    registerWIthEmailAndPassword(data.email, data.password).then((result) => {
-      console.log(result.user);
-      updateUser(data.name, data.photo);
-      MySwal.fire("Good job!", "You Account Is Created!", "success");
-      reset();
-      // navigate.push("/login");
-      // fetch("https://vedhak-iamnahid591998-gmailcom.vercel.app/users", {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify({ name: data.name, email: data.email }),
-      // });
-    });
-    const publicKey =
-      "eyJpdiI6Im5iZ2RlRFFhbG93aWM0czBrTEhTUVE9PSIsInZhbHVlIjoiUy9BbU9nK0t5bjNpTGNpYWxKSThJOEYzYUR3WlBDeEZEbFRmK3ZrOUwyZ2lPV3FGUXR1Yk5NWDhhMkM4bUNhWk41WnhEWEppcENGSVVvS2xuVld0QXc9PSIsIm1hYyI6ImUxMzFhZWFkYzNiYTAzNjYzNzkxNDU5MzhjZDNiNTA0Y2I5OTViYTk4OWYxYjFhYmRmNjZjNjFkNDlhNTUzNWMiLCJ0YWciOiIifQ==";
-
-    fetch(
-      `http://localhost:8000/api/v2/app/register?public_key=${encodeURIComponent(
-        publicKey
-      )}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: data.name,
-          email: data.email,
-          password: data.password,
-        }),
-      }
-    );
+    // registerWIthEmailAndPassword(data.email, data.password).then((result) => {
+    //   console.log(result.user);
+    //   updateUser(data.name, data.photo);
+    //   MySwal.fire("Good job!", "You Account Is Created!", "success");
+    //   reset();
+    //   // navigate.push("/login");
+    //   // fetch("https://vedhak-iamnahid591998-gmailcom.vercel.app/users", {
+    //   //   method: "POST",
+    //   //   headers: {
+    //   //     "Content-Type": "application/json",
+    //   //   },
+    //   //   body: JSON.stringify({ name: data.name, email: data.email }),
+    //   // });
+    // });
+    axiosSecure
+      .post(`/register`, {
+        name: data.name,
+        email: data.email,
+        password: data.password,
+      })
+      .then((res) => {
+        const newToken = res.data.data.token;
+        localStorage.setItem("access-token", newToken);
+        if (res) {
+          MySwal.fire(res.data.message);
+        }
+      });
+    reset();
   };
 
   return (

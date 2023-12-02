@@ -4,10 +4,15 @@
 
 @import url("https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&display=swap");
 
+@import url("https://fonts.googleapis.com/css2?family=Questrial&display=swap");
+
 body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   max-width: fit-content;
   font-family: "Lato", sans-serif;
+}
+.dashboard {
+  font-family: "Questrial", sans-serif !important;
 }

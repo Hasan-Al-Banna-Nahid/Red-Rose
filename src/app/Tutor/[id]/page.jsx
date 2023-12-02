@@ -33,7 +33,7 @@ const page = async ({ params }) => {
                 >
                   <div className="ml-6">
                     <Image src={image} width={600} height={600} alt="Tutor" />
-                    <h3 className="text-[20px] my-2">
+                    {/* <h3 className="text-[20px] my-2">
                       <span className="font-bold">Name : </span>
                       <span className="ValuefontSize">{data.name}</span>
                     </h3>
@@ -47,7 +47,7 @@ const page = async ({ params }) => {
                     <h3 className="text-[20px] my-2">
                       <span className="font-bold">ID : </span>
                       <span className="ValuefontSize">{data.id}</span>
-                    </h3>
+                    </h3> */}
                     {/* <p className="my-2">
                       <span className="font-bold">Total Views :</span>{" "}
                       {data.total_views}
@@ -161,7 +161,7 @@ const page = async ({ params }) => {
                           </div>
                           <div className="bg-white p-2 ">
                             <span className="ValuefontSize">
-                              {"3 Days/Week"}
+                              {"3 Days / Week"}
                             </span>
                           </div>
                         </div>
@@ -337,6 +337,52 @@ const page = async ({ params }) => {
                           <div className="bg-[#F2F2F2] border-r p-2 w-[230px] text-left">
                             <p className="">
                               <span className="font-bold text-[20px]">
+                                Name :
+                              </span>{" "}
+                            </p>
+                          </div>
+                          <div className="bg-white p-2 ">
+                            <span>
+                              <span className="ValuefontSize">{data.name}</span>
+                            </span>
+                          </div>
+                        </div>
+                        <div className="flex border mb-2 ">
+                          <div className="bg-[#F2F2F2] border-r p-2 w-[230px] text-left">
+                            <p className="">
+                              <span className="font-bold text-[20px]">
+                                Title :
+                              </span>{" "}
+                            </p>
+                          </div>
+                          <div className="bg-white p-2 ">
+                            <span>
+                              <span className="ValuefontSize">
+                                {(data && data.title) || "Math Teacher"}
+                              </span>
+                            </span>
+                          </div>
+                        </div>
+                        <div className="flex border mb-2 ">
+                          <div className="bg-[#F2F2F2] border-r p-2 w-[230px] text-left">
+                            <p className="">
+                              <span className="font-bold text-[20px]">
+                                ID :
+                              </span>{" "}
+                            </p>
+                          </div>
+                          <div className="bg-white p-2 ">
+                            <span>
+                              <span className="ValuefontSize">
+                                {data.id || "RR120365483"}
+                              </span>
+                            </span>
+                          </div>
+                        </div>
+                        <div className="flex border mb-2 ">
+                          <div className="bg-[#F2F2F2] border-r p-2 w-[230px] text-left">
+                            <p className="">
+                              <span className="font-bold text-[20px]">
                                 Member Since :
                               </span>{" "}
                             </p>
@@ -359,69 +405,22 @@ const page = async ({ params }) => {
                           <div className="bg-white p-2 ">
                             <span>
                               <span className="ValuefontSize">
-                                {data.gender}
+                                {data.gender || "Male"}
                               </span>
                             </span>
                           </div>
                         </div>
-
-                        <div className="flex border mb-2">
-                          <div className="bg-[#F2F2F2] border-r p-2 w-[230px] text-left">
-                            <h3 className=" text-[20px]">
-                              <span className="font-bold">Class :</span>{" "}
-                            </h3>
-                          </div>
-                          <div className="bg-white p-2 ">
-                            <span className="ValuefontSize">
-                              {data.preferred_class}
-                            </span>
-                          </div>
-                        </div>
-
-                        <div className="flex border mb-2">
-                          <div className="bg-[#F2F2F2] border-r p-2 w-[230px] text-left">
-                            <h3 className=" text-[20px]">
-                              <span className="font-bold">Class :</span>{" "}
-                            </h3>
-                          </div>
-                          <div className="bg-white p-2 ">
-                            <span className="ValuefontSize">
-                              {data.preferred_class}
-                            </span>
-                          </div>
-                        </div>
-
-                        <div className="flex border mb-2">
-                          <div className="bg-[#F2F2F2] border-r p-2 w-[230px] text-left">
-                            <h3 className=" text-[20px]">
-                              <span className="font-bold">Class :</span>{" "}
-                            </h3>
-                          </div>
-                          <div className="bg-white p-2 ">
-                            <span className="ValuefontSize">
-                              {data.preferred_class}
-                            </span>
-                          </div>
-                        </div>
-
-                        <div className="flex border mb-2">
-                          <div className="bg-[#F2F2F2] border-r p-2 w-[230px] text-left">
-                            <h3 className=" text-[20px]">
-                              <span className="font-bold">Class :</span>{" "}
-                            </h3>
-                          </div>
-                          <div className="bg-white p-2 ">
-                            <span className="ValuefontSize">
-                              {data.preferred_class}
-                            </span>
-                          </div>
-                        </div>
+                        {/* <div className="flex border mb-2">
+                          <SingleTutor />
+                        </div> */}
                       </div>
                     );
                   })}
                 </div>
               </TabPanel>
             </Tabs>
+            <br />
+            <br />
             <div className="mt-12">
               <Marquee>
                 <h2 className="text-2xl font-bold text-teal-800">

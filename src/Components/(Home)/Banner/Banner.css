@@ -5,3 +5,29 @@
 .welcomeText {
   line-height: 4rem;
 }
+/* styles.css */
+
+@keyframes glowAnimation {
+  0% {
+    box-shadow: 0 0 20px rgba(0, 47, 255, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(255, 0, 119, 0.8);
+  }
+  100% {
+    box-shadow: 0 0 30px rgba(0, 31, 18, 0.5);
+  }
+}
+
+.glowing-image-wrapper {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  border-radius: 8px; /* Adjust the border radius as needed */
+  animation: glowAnimation 3s infinite; /* Adjust the duration as needed */
+}
+
+.glowing-image {
+  display: block;
+  border-radius: 8px;
+}

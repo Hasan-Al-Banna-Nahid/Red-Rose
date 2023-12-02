@@ -1,13 +1,25 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./style.css";
+import useAxiosSecure from "@/Components/Hooks/useAxiosSecure";
+import { useRouter } from "next/navigation";
 
 const Navbar = () => {
   const [isMenuOpen, setMenuOpen] = useState(false);
-
+  const user = JSON.parse(localStorage.getItem("User"));
+  const dashboard = useRouter();
+  const axiosSecure = useAxiosSecure();
   const toggleMenu = () => {
     setMenuOpen(!isMenuOpen);
+  };
+  const handleUserToDashboard = () => {
+    dashboard.push("/Dashboard");
+  };
+  const handleMyProfile = () => {
+    axiosSecure.get("/my-profile").then((res) => {
+      console.log(res.data);
+    });
   };
   return (
     <div>
@@ -108,12 +120,21 @@ const Navbar = () => {
           </ul>
         </div>
         <div className="navbar-end">
-          <Link
-            href={"/Authorization/Login"}
-            className="btn btn-outline btn-success w-[200px] text-[18px]"
-          >
-            Login
-          </Link>
+          {user ? (
+            <button
+              onClick={handleUserToDashboard}
+              className="btn btn-outline btn-primary"
+            >
+              View Profile
+            </button>
+          ) : (
+            <Link
+              href={"/Authorization/Login"}
+              className="btn btn-outline btn-success w-[200px] text-[18px]"
+            >
+              Login
+            </Link>
+          )}
         </div>
       </div>
     </div>

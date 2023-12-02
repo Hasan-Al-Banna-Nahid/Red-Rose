@@ -65,22 +65,35 @@ const Login = () => {
         const userId = res.data.data.user.id;
         console.log(userId);
         localStorage.setItem("access-token", newToken);
-        if (res) {
-          MySwal.fire(res.data.message);
-          axiosSecure
-            .get(`/view-profile/${userId}`)
-            .then((profileResponse) => {
-              // Handle the profile response as needed
-              console.log("Profile Data:", profileResponse.data);
 
-              // Navigate to the profile route
-              profile.push(`http://localhost:8000/admin`);
+        // localStorage.setItem("User", JSON.stringify(res.data.data.user));
+
+        if (res) {
+          // window.location.reload();
+          // MySwal.fire(res.data.message);
+          axiosSecure
+            .get(`/my-profile`)
+            .then((profileRes) => {
+              // Store the profile data in localStorage
+              localStorage.setItem(
+                "User",
+                JSON.stringify(profileRes.data.data)
+              );
+
+              // Reload the page and show a success message
+              MySwal.fire(res.data.message);
+              window.location.reload();
             })
-            .catch((profileError) => {
-              // Handle errors related to fetching the profile
-              console.error("Error fetching profile:", profileError);
+            .catch((profileErr) => {
+              console.error("Error fetching user profile:", profileErr);
+              MySwal.fire("Error fetching user profile");
             });
         }
+      })
+      .catch((err) => {
+        console.log(err);
+        MySwal.fire("User Name or Password does not match");
+        return;
       });
 
     // fetch("http://localhost:8000/api/login", {

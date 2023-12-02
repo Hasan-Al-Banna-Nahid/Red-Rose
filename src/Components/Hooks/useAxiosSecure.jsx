@@ -2,7 +2,6 @@ import { useEffect, useContext } from "react";
 import axios from "axios";
 import { AuthContext } from "@/app/Authorization/AuthProvider";
 import { useRouter } from "next/navigation";
-import CryptoJS from "crypto-js";
 
 const useAxiosSecure = () => {
   const { logOut } = useContext(AuthContext);
@@ -15,18 +14,11 @@ const useAxiosSecure = () => {
 
   useEffect(() => {
     axiosSecure.interceptors.request.use((config) => {
-      const dataToEncrypt = public_key;
-      const encryptedData = CryptoJS.AES.encrypt(
-        dataToEncrypt,
-        public_key
-      ).toString();
-      const urlEncodedData = encodeURIComponent(encryptedData);
-      console.log("Encrypted Data:", encryptedData);
-      console.log("Public Key:", public_key);
       config.params = {
         ...config.params,
-        public_key: urlEncodedData,
+        public_key: public_key,
       };
+      // const token = localStorage.getItem("access-token");
       const token = localStorage.getItem("access-token");
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;

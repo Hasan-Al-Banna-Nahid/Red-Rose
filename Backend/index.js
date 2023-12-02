@@ -55,6 +55,7 @@ async function run() {
       "Pinged your deployment. You successfully connected to MongoDB!"
     );
     const tutorCollections = client.db("Tutor").collection("Tutor");
+    const UserCollections = client.db("User").collection("user");
     app.get("/tutor/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
@@ -62,6 +63,11 @@ async function run() {
       res.send(result);
     });
     app.get("/tutor/", async (req, res) => {
+      const result = await tutorCollections.find().toArray();
+      res.send(result);
+    });
+    app.get("/user", async (req, res) => {
+      const data = req.body;
       const result = await tutorCollections.find().toArray();
       res.send(result);
     });

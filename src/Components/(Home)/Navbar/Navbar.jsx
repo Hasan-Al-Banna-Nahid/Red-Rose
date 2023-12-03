@@ -85,7 +85,7 @@ const Navbar = () => {
             />
           </Link>
         </div>
-        <div className="navbar-center hidden lg:flex">
+        <div className="navbar-center hidden lg:flex z-40">
           <ul className="menu menu-horizontal px-1  text-2xl ">
             <li className="TextColor">
               <Link href={"/"}>Home</Link>
@@ -123,7 +123,7 @@ const Navbar = () => {
           {user ? (
             <button
               onClick={handleUserToDashboard}
-              className="btn btn-outline btn-primary"
+              className="btn btn-outline btn-success"
             >
               View Profile
             </button>

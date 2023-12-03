@@ -19,11 +19,11 @@ const page = () => {
     <div className="bg-base-300 w-[2000px]">
       <DashboardNavbar />
       <div className="bg-base-300 rounded-lg p-12">
-        <div className="grid grid-cols-6 mx-auto gap-6 ">
+        <div className="grid grid-cols-3 mx-auto gap-6 ">
           {blogs.map((data) => {
             return (
-              <div className="card bg-white w-[300px]" key={data.id}>
-                <div className="card-body">
+              <div className="card bg-white w-[500px] mx-auto" key={data.id}>
+                <div className="card-body w-[300px]">
                   <Image src={photo} height={70} width={80} alt="Blog" />
                   <h2 className="font-bold">{data.name}</h2>
                   <p className="font-bold">

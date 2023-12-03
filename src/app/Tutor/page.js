@@ -239,7 +239,7 @@ const Tutor = () => {
                       <p>Dhaka</p>
                     </button>
                     <Link href={`/Tutor/${data._id}`}>
-                      <button className="w-full btn my-4  btn-success">
+                      <button className="w-full btn my-4  bg-teal-600">
                         View Details
                       </button>
                     </Link>

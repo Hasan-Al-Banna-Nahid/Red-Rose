@@ -5,9 +5,49 @@ import photo from "../../../public/asset/banner.webp";
 import { FaAngleRight } from "react-icons/fa";
 import { Dialog, Transition } from "@headlessui/react";
 import DashboardNavbar from "./DashboardHeader/DashboardNavbar";
+import useAxiosSecure from "@/Components/Hooks/useAxiosSecure";
 const page = () => {
+  const axiosSecure = useAxiosSecure();
   const [data, setData] = useState({});
+  const [country, setCountry] = useState([]);
+  const [divisions, setDivisions] = useState([]);
+  const [cities, setCities] = useState([]);
+  const [upazilas, setUpazilas] = useState([]);
+  const [selectedCountry, setSelectedCountry] = useState("");
+  const [selectedDivision, setSelectedDivision] = useState("");
+  const [selectedCities, setSelectedCities] = useState("");
+  const [selectedUpazilas, setSelectedUpazilas] = useState("");
+  useEffect(() => {
+    axiosSecure.get("/all-country").then((res) => {
+      setCountry(res.data.data.countries);
+    });
+    axiosSecure.get("/division/18").then((res) => {
+      setDivisions(res.data.data.divisions);
+    });
+    axiosSecure.get("/city/2").then((res) => {
+      setCities(res.data.data.cities);
+    });
+    axiosSecure.get("/upazila/7").then((res) => {
+      setUpazilas(res.data.data.upazilas);
+    });
+  }, []);
+  const handleCountryChange = (event) => {
+    setSelectedCountry(event.target.value);
+    // You can make additional API calls here to fetch data based on the selected country
+  };
 
+  const handleDivisionChange = (event) => {
+    setSelectedDivision(event.target.value);
+    // You can make additional API calls here to fetch data based on the selected division
+  };
+  const handleCitiesChange = (event) => {
+    setSelectedCities(event.target.value);
+    // You can make additional API calls here to fetch data based on the selected division
+  };
+  const handleUpazilasChange = (event) => {
+    setSelectedUpazilas(event.target.value);
+    // You can make additional API calls here to fetch data based on the selected division
+  };
   let [isOpen, setIsOpen] = useState(false);
   const [TeacherDescriptionVisible, setTeacherDescriptionVisible] =
     useState(false);
@@ -183,7 +223,7 @@ const page = () => {
       {/* Header */}
       {/* User Info */}
       <div className="flex justify-center gap-8  my-8">
-        <div className="w-[1000px]">
+        <div className="w-[900px]">
           {/*  */}
           <div className="bg-white rounded-lg p-12">
             <div className="text-center w-[400px] mx-auto mt-8">
@@ -209,7 +249,7 @@ const page = () => {
             </div>
             <hr />
             <div className="flex justify-between items-center w-[800px]">
-              <form className="">
+              <div className="">
                 <div className="flex justify-between items-center gap-4">
                   <div>
                     <p className="font-bold my-4">
@@ -243,10 +283,111 @@ const page = () => {
                     </button>
                   </div>
                 </div>
+                <div className="flex justify-between items-center gap-4">
+                  <div>
+                    <p className="text-[18px] font-bold text-center">
+                      {" "}
+                      Address :{" "}
+                    </p>
+                    <hr />
+                    <div className="font-bold my-4">
+                      <div className="grid grid-cols-2 gap-4">
+                        <select
+                          value={selectedCountry}
+                          onChange={handleCountryChange}
+                          className="btn border-2 border-red-600  me-4"
+                        >
+                          <option value="">Select Country</option>
+                          {country.map((c) => (
+                            <option
+                              key={c.id}
+                              value={c.id}
+                              className="btn btn-outline leading-7 text-[18px]"
+                            >
+                              {c.name}
+                            </option>
+                          ))}
+                        </select>
+
+                        <select
+                          value={selectedDivision}
+                          onChange={handleDivisionChange}
+                          className=" btn border-2 border-red-600   me-4"
+                        >
+                          <option value="">Select Division</option>
+                          {divisions.map((d) => (
+                            <option
+                              key={d.id}
+                              value={d.id}
+                              className="btn btn-outline  leading-7 text-[18px]"
+                            >
+                              {d.name}
+                            </option>
+                          ))}
+                        </select>
+
+                        <select
+                          value={selectedCities}
+                          onChange={handleCitiesChange}
+                          className=" btn border-2 border-red-600   me-4"
+                        >
+                          <option value="">Select Cities</option>
+                          {cities.map((c) => (
+                            <option
+                              key={c.id}
+                              value={c.id}
+                              className="btn btn-outline  leading-7 text-[18px]"
+                            >
+                              {c.name}
+                            </option>
+                          ))}
+                        </select>
+
+                        <select
+                          value={selectedUpazilas}
+                          onChange={handleUpazilasChange}
+                          className=" btn border-2 border-red-600   me-4"
+                        >
+                          <option value="">Select Upazila's</option>
+                          {upazilas.map((u) => (
+                            <option
+                              key={u.id}
+                              value={u.id}
+                              className="btn btn-outline   leading-7 text-[18px]"
+                            >
+                              {u.name}
+                            </option>
+                          ))}
+                        </select>
+                        {/* Add more select elements for additional levels as needed */}
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <button onClick={() => openModal("address")}>
+                      <FaAngleRight className="text-2xl text-red-600" />
+                    </button>
+                  </div>
+                </div>
                 {/* <p className="font-bold text-[18px] my-4">Designation</p> */}
-              </form>
+              </div>
               <div className="bg-white rounded-lg p-12 mt-8">
-                <div className="my-6">
+                <div className="flex justify-between items-center gap-4">
+                  <div>
+                    <p className="font-bold my-4">
+                      Date Of Birth :{" "}
+                      <span className="font-normal">
+                        {data.dob || "1997-23-08"}
+                      </span>
+                    </p>
+                  </div>
+                  <div>
+                    <button onClick={() => openModal("dob")}>
+                      <FaAngleRight className="text-2xl text-red-600" />
+                    </button>
+                  </div>
+                </div>
+                <div className="my-2">
                   <div className="flex justify-between items-center gap-4">
                     <div>
                       <p className="font-bold my-4">
@@ -275,55 +416,25 @@ const page = () => {
                       </button>
                     </div>
                   </div>
+                  <div className="flex justify-between items-center gap-4">
+                    <div>
+                      <p className="font-bold my-4">
+                        Gender :{" "}
+                        <span className="font-normal">
+                          {data.address || "Male"}
+                        </span>
+                      </p>
+                    </div>
+                    <div>
+                      <button onClick={() => openModal("gender")}>
+                        <FaAngleRight className="text-2xl text-red-600" />
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
             <div className="bg-white rounded-lg p-12 mt-8">
-              <div className="flex justify-between items-center gap-4">
-                <div>
-                  <p className="font-bold my-4">
-                    Date Of Birth :{" "}
-                    <span className="font-normal">
-                      {data.dob || "1997-23-08"}
-                    </span>
-                  </p>
-                </div>
-                <div>
-                  <button onClick={() => openModal("dob")}>
-                    <FaAngleRight className="text-2xl text-red-600" />
-                  </button>
-                </div>
-              </div>
-              <div className="flex justify-between items-center gap-4">
-                <div>
-                  <p className="font-bold my-4">
-                    Address :{" "}
-                    <span className="font-normal">
-                      {data.address || "Jatrabadi, Dhaka"}
-                    </span>
-                  </p>
-                </div>
-                <div>
-                  <button onClick={() => openModal("address")}>
-                    <FaAngleRight className="text-2xl text-red-600" />
-                  </button>
-                </div>
-              </div>
-              <div className="flex justify-between items-center gap-4">
-                <div>
-                  <p className="font-bold my-4">
-                    Gender :{" "}
-                    <span className="font-normal">
-                      {data.address || "Male"}
-                    </span>
-                  </p>
-                </div>
-                <div>
-                  <button onClick={() => openModal("gender")}>
-                    <FaAngleRight className="text-2xl text-red-600" />
-                  </button>
-                </div>
-              </div>
               {TeacherDescriptionVisible && (
                 <div className="my-8">
                   <h2 className="text-2xl font-bold my-4">Educational Info</h2>
@@ -381,14 +492,14 @@ const page = () => {
           {/*  */}
 
           {/* About */}
-          <div className="bg-white rounded-lg p-12 mt-8">
+          <div className="bg-white rounded-lg p-12 mt-8 mb-4">
             <h2 className="text-2xl">About</h2>
             <hr />
             <div className="my-6"></div>
           </div>
           {/* About */}
         </div>
-        <div className="w-[700px] bg-white p-6 rounded-lg">
+        <div className="w-[600px] bg-white p-6 rounded-lg mb-4">
           <div>
             <h2 className="text-2xl">Advanced Settings</h2>
             <hr />
@@ -737,7 +848,7 @@ const page = () => {
                   <br />
                   <input
                     type="text"
-                    className="w-[650px] mt-2 bg-[#E9EDF4] p-6 rounded-lg h-[150px]"
+                    className="w-[530px] mt-2 bg-[#E9EDF4] p-6 rounded-lg h-[150px]"
                   />
                 </div>
               </form>

@@ -25,6 +25,7 @@
   overflow: hidden;
   border-radius: 8px; /* Adjust the border radius as needed */
   animation: glowAnimation 3s infinite; /* Adjust the duration as needed */
+  box-shadow: 0 0 70px rgba(0, 31, 18, 0.5); /* Initial box-shadow for when animation is not running */
 }
 
 .glowing-image {

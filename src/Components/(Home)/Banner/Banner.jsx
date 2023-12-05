@@ -28,13 +28,15 @@ const Banner = () => {
           </div>
         </div>
         <div className={"glowing-image-wrapper"}>
-          <Image
-            src={banner}
-            width={600}
-            height={600}
-            alt=""
-            className={"glowing-image"}
-          />
+          <div>
+            <Image
+              src={banner}
+              width={600}
+              height={600}
+              alt=""
+              className={"glowing-image"}
+            />
+          </div>
         </div>
       </div>
     </div>

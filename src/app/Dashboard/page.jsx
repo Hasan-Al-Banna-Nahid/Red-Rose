@@ -2,10 +2,11 @@
 import Image from "next/image";
 import React, { useEffect, useState, Fragment } from "react";
 import photo from "../../../public/asset/banner.webp";
-import { FaAngleRight } from "react-icons/fa";
+import { FaAngleRight, FaFacebook } from "react-icons/fa";
 import { Dialog, Transition } from "@headlessui/react";
 import DashboardNavbar from "./DashboardHeader/DashboardNavbar";
 import useAxiosSecure from "@/Components/Hooks/useAxiosSecure";
+import { FaLinkedin, FaTwitter } from "react-icons/fa6";
 const page = () => {
   const axiosSecure = useAxiosSecure();
   const [data, setData] = useState({});
@@ -17,20 +18,45 @@ const page = () => {
   const [selectedDivision, setSelectedDivision] = useState("");
   const [selectedCities, setSelectedCities] = useState("");
   const [selectedUpazilas, setSelectedUpazilas] = useState("");
+
   useEffect(() => {
-    axiosSecure.get("/all-country").then((res) => {
-      setCountry(res.data.data.countries);
-    });
-    axiosSecure.get("/division/18").then((res) => {
-      setDivisions(res.data.data.divisions);
-    });
-    axiosSecure.get("/city/2").then((res) => {
-      setCities(res.data.data.cities);
-    });
-    axiosSecure.get("/upazila/7").then((res) => {
-      setUpazilas(res.data.data.upazilas);
-    });
+    axiosSecure
+      .get("/division/18")
+      .then((res) => {
+        const token = res.data.token;
+        localStorage.setItem("access-token", token);
+        setDivisions(res.data.data.divisions);
+
+        // Chain the next request
+        return axiosSecure.get("/all-country");
+      })
+      .then((res) => {
+        const token = res.data.token;
+        localStorage.setItem("access-token", token);
+        setCountry(res.data.data.countries);
+
+        // Chain the next request
+        return axiosSecure.get("/city/2");
+      })
+      .then((res) => {
+        const token = res.data.token;
+        localStorage.setItem("access-token", token);
+        setCities(res.data.data.cities);
+
+        // Chain the next request
+        return axiosSecure.get("/upazila/7");
+      })
+      .then((res) => {
+        const token = res.data.token;
+        localStorage.setItem("access-token", token);
+        setUpazilas(res.data.data.upazilas);
+      })
+      .catch((error) => {
+        // Handle errors here
+        console.error("Error in API requests:", error);
+      });
   }, []);
+
   const handleCountryChange = (event) => {
     setSelectedCountry(event.target.value);
     // You can make additional API calls here to fetch data based on the selected country
@@ -89,9 +115,11 @@ const page = () => {
   }
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("User"));
-    setData(user.user);
+    setData(user?.user);
   }, []);
-
+  const handleSubmit = (e) => {
+    e.preventDefault();
+  };
   return (
     <div className="dashboard bg-base-300 w-[2000px]">
       <Transition appear show={isOpen} as={Fragment}>
@@ -119,14 +147,14 @@ const page = () => {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                <Dialog.Panel className="w-full max-w-lg transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
                   <Dialog.Title
                     as="h3"
                     className="text-lg font-medium leading-6 text-gray-900"
                   >
                     Enter Your Data
                   </Dialog.Title>
-                  <div className="mt-2 p-8 rounded-lg">
+                  <div className="mt-2 p-8 rounded-lg ">
                     {inputType === "email" && (
                       <input
                         type="email"
@@ -168,12 +196,112 @@ const page = () => {
                       />
                     )}
                     {inputType === "address" && (
-                      <input
-                        type="address"
-                        className=" mt-2 bg-[#E9EDF4] p-6 rounded-lg h-[30px]"
-                        placeholder="Dhonia, Dhaka"
-                        defaultValue={data.address || "Noyapada,Dhaka"}
-                      />
+                      <div className="grid grid-cols-2 gap-4">
+                        <select
+                          value={selectedCountry}
+                          onChange={handleCountryChange}
+                          className="btn   me-4"
+                        >
+                          <option value="">Select Country</option>
+                          {country.map((c) => (
+                            <option
+                              key={c.id}
+                              value={c.id}
+                              className="btn btn-outline leading-7 text-[18px]"
+                            >
+                              {c.name}
+                            </option>
+                          ))}
+                        </select>
+
+                        <select
+                          value={selectedDivision}
+                          onChange={handleDivisionChange}
+                          className=" btn    me-4"
+                        >
+                          <option value="">Select Division</option>
+                          {divisions.map((d) => (
+                            <option
+                              key={d.id}
+                              value={d.id}
+                              className="btn btn-outline  leading-7 text-[18px]"
+                            >
+                              {d.name}
+                            </option>
+                          ))}
+                        </select>
+
+                        <select
+                          value={selectedCities}
+                          onChange={handleCitiesChange}
+                          className=" btn    me-4"
+                        >
+                          <option value="">Select Cities</option>
+                          {cities.map((c) => (
+                            <option
+                              key={c.id}
+                              value={c.id}
+                              className="btn btn-outline  leading-7 text-[18px]"
+                            >
+                              {c.name}
+                            </option>
+                          ))}
+                        </select>
+
+                        <select
+                          value={selectedUpazilas}
+                          onChange={handleUpazilasChange}
+                          className=" btn    me-4"
+                        >
+                          <option value="">Select Upazila's</option>
+                          {upazilas.map((u) => (
+                            <option
+                              key={u.id}
+                              value={u.id}
+                              className="btn btn-outline   leading-7 text-[18px]"
+                            >
+                              {u.name}
+                            </option>
+                          ))}
+                        </select>
+                        <div>
+                          <label className="font-bold" htmlFor="">
+                            Post Office
+                          </label>
+                          <input
+                            type="text"
+                            className="w-[200px] input-bordered btn p-6 rounded-lg h-[30px]"
+                          />
+                        </div>
+                        <div>
+                          <label className="font-bold" htmlFor="">
+                            Union
+                          </label>
+                          <input
+                            type="text"
+                            className="w-[200px] input-bordered btn p-6 rounded-lg h-[30px]"
+                          />
+                        </div>
+                        <div>
+                          <label className="font-bold" htmlFor="">
+                            Village{" "}
+                          </label>
+                          <input
+                            type="text"
+                            className="w-[200px] input-bordered btn p-6 rounded-lg h-[30px]"
+                          />
+                        </div>
+                        <div>
+                          <label className="font-bold" htmlFor="">
+                            Road / House{" "}
+                          </label>
+                          <input
+                            type="text"
+                            className="w-[200px] input-bordered btn p-6 rounded-lg h-[30px]"
+                          />
+                        </div>
+                        {/* Add more select elements for additional levels as needed */}
+                      </div>
                     )}
                     {inputType === "gender" && (
                       <select name="" id="">
@@ -189,7 +317,7 @@ const page = () => {
                       className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
                       onClick={closeModal}
                     >
-                      Got it, thanks!
+                      Save, thanks!
                     </button>
                   </div>
                 </Dialog.Panel>
@@ -223,27 +351,31 @@ const page = () => {
       {/* Header */}
       {/* User Info */}
       <div className="flex justify-center gap-8  my-8">
-        <div className="w-[900px]">
+        <div className="w-[850px]">
           {/*  */}
-          <div className="bg-white rounded-lg p-12">
-            <div className="text-center w-[400px] mx-auto mt-8">
+          <div className="bg-white rounded-lg p-12 mb-4">
+            <div className="text-center w-[400px] mx-auto ">
               <Image
                 src={photo}
-                width={200}
-                height={200}
+                width={300}
+                height={300}
                 alt="User"
                 className=" mx-auto mb-2"
-                style={{ borderRadius: "50%" }}
+                style={{ borderRadius: "100%" }}
               />
-              <button className="btn btn-outline my-4 btn-primary">
+              <button className="btn btn-outline my-4 bg-gradient-to-r from-[#cc009c] to-[#ff0000b7] text-white">
                 Upload Photo
               </button>
               <p className="text-[18px]">Only .jpg .png .jpeg allowed</p>
               <hr />
             </div>
-            <div className="flex gap-2 justify-between mx-auto w-[270px] mt-4 mb-4">
-              <button className="btn btn-primary">My Friend</button>
-              <button className="btn btn-primary">Contact Friend</button>
+            <div className="flex gap-2 justify-between mx-auto w-[400px] mt-4 mb-4">
+              <button className="btn bg-teal-600 btn-outline text-white w-[200px]">
+                My Friend
+              </button>
+              <button className="btn bg-teal-600 btn-outline text-white w-[200px]">
+                Contact Friend
+              </button>
               {/* <button className="btn btn-primary">Request</button>
               <button className="btn btn-primary">Send</button> */}
             </div>
@@ -285,81 +417,14 @@ const page = () => {
                 </div>
                 <div className="flex justify-between items-center gap-4">
                   <div>
-                    <p className="text-[18px] font-bold text-center">
-                      {" "}
-                      Address :{" "}
-                    </p>
-                    <hr />
                     <div className="font-bold my-4">
-                      <div className="grid grid-cols-2 gap-4">
-                        <select
-                          value={selectedCountry}
-                          onChange={handleCountryChange}
-                          className="btn border-2 border-red-600  me-4"
-                        >
-                          <option value="">Select Country</option>
-                          {country.map((c) => (
-                            <option
-                              key={c.id}
-                              value={c.id}
-                              className="btn btn-outline leading-7 text-[18px]"
-                            >
-                              {c.name}
-                            </option>
-                          ))}
-                        </select>
-
-                        <select
-                          value={selectedDivision}
-                          onChange={handleDivisionChange}
-                          className=" btn border-2 border-red-600   me-4"
-                        >
-                          <option value="">Select Division</option>
-                          {divisions.map((d) => (
-                            <option
-                              key={d.id}
-                              value={d.id}
-                              className="btn btn-outline  leading-7 text-[18px]"
-                            >
-                              {d.name}
-                            </option>
-                          ))}
-                        </select>
-
-                        <select
-                          value={selectedCities}
-                          onChange={handleCitiesChange}
-                          className=" btn border-2 border-red-600   me-4"
-                        >
-                          <option value="">Select Cities</option>
-                          {cities.map((c) => (
-                            <option
-                              key={c.id}
-                              value={c.id}
-                              className="btn btn-outline  leading-7 text-[18px]"
-                            >
-                              {c.name}
-                            </option>
-                          ))}
-                        </select>
-
-                        <select
-                          value={selectedUpazilas}
-                          onChange={handleUpazilasChange}
-                          className=" btn border-2 border-red-600   me-4"
-                        >
-                          <option value="">Select Upazila's</option>
-                          {upazilas.map((u) => (
-                            <option
-                              key={u.id}
-                              value={u.id}
-                              className="btn btn-outline   leading-7 text-[18px]"
-                            >
-                              {u.name}
-                            </option>
-                          ))}
-                        </select>
-                        {/* Add more select elements for additional levels as needed */}
+                      <div>
+                        <p className="font-bold my-4">
+                          Address :{" "}
+                          <span className="font-normal">
+                            {data.address || "Jatrabadi, Dhaka"}
+                          </span>
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -440,7 +505,9 @@ const page = () => {
                   <h2 className="text-2xl font-bold my-4">Educational Info</h2>
                   <hr />
                   <br />
-                  <label htmlFor="">Degree</label>
+                  <label className="font-bold" htmlFor="">
+                    Degree
+                  </label>
                   <br />
                   <input
                     type="text"
@@ -448,7 +515,9 @@ const page = () => {
                     placeholder="P.H.D In AI"
                   />
                   <br />
-                  <label htmlFor="">Year</label>
+                  <label className="font-bold" htmlFor="">
+                    Year
+                  </label>
                   <br />
                   <input
                     type="text"
@@ -456,7 +525,9 @@ const page = () => {
                     placeholder="2000"
                   />
                   <br />
-                  <label htmlFor="">Institute</label>
+                  <label className="font-bold" htmlFor="">
+                    Institute
+                  </label>
                   <br />
                   <input
                     type="text"
@@ -464,7 +535,9 @@ const page = () => {
                     placeholder="Buet"
                   />
                   <br />
-                  <label htmlFor="">Group / Subject</label>
+                  <label className="font-bold" htmlFor="">
+                    Group / Subject
+                  </label>
                   <br />
                   <input
                     type="text"
@@ -472,7 +545,9 @@ const page = () => {
                     placeholder="C.S.E"
                   />
                   <br />
-                  <label htmlFor="">Result</label>
+                  <label className="font-bold" htmlFor="">
+                    Result
+                  </label>
                   <br />
                   <input
                     type="text"
@@ -483,23 +558,33 @@ const page = () => {
                 </div>
               )}
             </div>
-            <div className="bg-white rounded-lg p-12 mt-8">
+            <div className="bg-white rounded-lg p-4 mt-4 ">
               <h2 className="text-2xl">Social Information</h2>
               <hr />
-              <div className="my-6"></div>
+              <div className="my-6 flex justify-center items-center gap-8">
+                <div>
+                  <FaFacebook className="text-6xl text-[#1877F2]" />
+                </div>
+                <div>
+                  <FaLinkedin className="text-6xl text-[#0a66c2]" />
+                </div>
+                <div>
+                  <FaTwitter className="text-6xl text-[#657786]" />
+                </div>
+              </div>
             </div>
           </div>
           {/*  */}
 
           {/* About */}
-          <div className="bg-white rounded-lg p-12 mt-8 mb-4">
+          {/* <div className="bg-white rounded-lg p-12 mt-8 mb-4">
             <h2 className="text-2xl">About</h2>
             <hr />
             <div className="my-6"></div>
-          </div>
+          </div> */}
           {/* About */}
         </div>
-        <div className="w-[600px] bg-white p-6 rounded-lg mb-4">
+        <div className="w-[550px] bg-white p-6 rounded-lg mb-4">
           <div>
             <h2 className="text-2xl">Advanced Settings</h2>
             <hr />
@@ -518,15 +603,15 @@ const page = () => {
               <p className="text-[18px]">Only .jpg .png .jpeg allowed</p>
               <hr />
             </div> */}
-            <div className="mt-8">
-              <div className="flex justify-center gap-6 my-6 items-center">
+            <div className="">
+              <div className="flex justify-center gap-6 p-2 items-center">
                 <div>
                   <button
                     onClick={() => {
                       handleBtnToggle();
                       handleSectionToggle("teacher");
                     }}
-                    className="btn btn-outline btn-warning"
+                    className="btn bg-gradient-to-r from-[#cc009c] to-[#ff0000b7] btn-outline text-white w-[200px]"
                   >
                     I am Teacher
                   </button>
@@ -537,17 +622,17 @@ const page = () => {
                       handleBtnToggle();
                       handleSectionToggle("student");
                     }}
-                    className="btn btn-outline btn-success"
+                    className="btn bg-gradient-to-r from-[#cc009c] to-[#023517b7] btn-outline text-white w-[200px]"
                   >
                     I am Student
                   </button>
                 </div>
               </div>
-              <form>
+              <form onSubmit={handleSubmit}>
                 {StudentDescriptionVisible && (
-                  <div className="grid w-[600px] gap-6 items-center mx-auto ">
+                  <div className="grid w-[600px] gap-4 items-center mx-auto ">
                     {/* <div>
-                      <label htmlFor="">
+                      <label  className="font-bold" htmlFor="">
                         RedRose Id (you are availlable to edit)
                       </label>
                       <br />
@@ -557,7 +642,9 @@ const page = () => {
                       />
                     </div> */}
                     <div>
-                      <label htmlFor="">Bio</label>
+                      <label className="font-bold" htmlFor="">
+                        Institution Name
+                      </label>
                       <br />
                       <input
                         type="text"
@@ -565,7 +652,9 @@ const page = () => {
                       />
                     </div>
                     <div>
-                      <label htmlFor="">Designation</label>
+                      <label className="font-bold" htmlFor="">
+                        Class / Department
+                      </label>
                       <br />
                       <input
                         type="text"
@@ -573,7 +662,7 @@ const page = () => {
                       />
                     </div>
                     {/* <div>
-                      <label htmlFor="">Date Of Birth</label>
+                      <label  className="font-bold" htmlFor="">Date Of Birth</label>
                       <br />
                       <input
                         type="date"
@@ -581,7 +670,7 @@ const page = () => {
                       />
                     </div> */}
                     {/* <div>
-                      <label htmlFor="">Name</label>
+                      <label  className="font-bold" htmlFor="">Name</label>
                       <br />
                       <input
                         type="text"
@@ -589,7 +678,7 @@ const page = () => {
                       />
                     </div> */}
                     {/* <div>
-                      <label htmlFor="">Email</label>
+                      <label  className="font-bold" htmlFor="">Email</label>
                       <br />
                       <input
                         type="email"
@@ -597,7 +686,7 @@ const page = () => {
                       />
                     </div> */}
                     {/* <div>
-                      <label htmlFor="">Address</label>
+                      <label  className="font-bold" htmlFor="">Address</label>
                       <br />
                       <input
                         type="date"
@@ -605,22 +694,28 @@ const page = () => {
                       />
                     </div> */}
                     <div>
-                      <label htmlFor="">Country</label>
+                      <label className="font-bold" htmlFor="">
+                        Roll
+                      </label>
                       <br />
-                      <select
-                        name=""
-                        id=""
+                      <input
+                        type="text"
                         className="input p-6 mt-2 rounded-lg w-[500px] h-[30px] bg-[#E9EDF4]"
-                      >
-                        <option value="Bangladesh" selected>
-                          Bangladesh
-                        </option>
-                        <option value="USA">USA</option>
-                        <option value="China">China</option>
-                      </select>
+                      />
+                    </div>
+
+                    <div>
+                      <label className="font-bold" htmlFor="">
+                        Group / Subject
+                      </label>
+                      <br />
+                      <input
+                        type="text"
+                        className="input p-6 mt-2 rounded-lg w-[500px] h-[30px] bg-[#E9EDF4]"
+                      />
                     </div>
                     {/* <div>
-                      <label htmlFor="">Gender</label>
+                      <label  className="font-bold" htmlFor="">Gender</label>
                       <br />
                       <select
                         name=""
@@ -632,27 +727,27 @@ const page = () => {
                       </select>
                     </div> */}
                     {/* <div>
-                      <label htmlFor="">Company Name</label>
+                      <label  className="font-bold" htmlFor="">Company Name</label>
                       <br />
                       <input
                         type="text"
                         className="w-[500px] mt-2 bg-[#E9EDF4] p-6 rounded-lg h-[30px]"
                       />
                     </div> */}
-                    <div>
-                      <label htmlFor="">Mobile / Phone Number</label>
+                    {/* <div>
+                      <label  className="font-bold" htmlFor="">Mobile / Phone Number</label>
                       <br />
                       <input
                         type="text"
                         className="w-[500px] mt-2 bg-[#E9EDF4] p-6 rounded-lg h-[30px]"
                       />
-                    </div>
+                    </div> */}
                   </div>
                 )}
                 {TeacherDescriptionVisible && (
-                  <div className="grid w-[600px] gap-6 items-center mx-auto ">
+                  <div className="grid w-[600px] gap-2 items-center mx-auto ">
                     {/* <div>
-                      <label htmlFor="">
+                      <label  className="font-bold" htmlFor="">
                         RedRose Id (you are availlable to edit)
                       </label>
                       <br />
@@ -663,7 +758,7 @@ const page = () => {
                       />
                     </div> */}
                     {/* <div>
-                      <label htmlFor="">Name</label>
+                      <label  className="font-bold" htmlFor="">Name</label>
                       <br />
                       <input
                         type="text"
@@ -672,7 +767,9 @@ const page = () => {
                       />
                     </div> */}
                     <div>
-                      <label htmlFor="">Designation / Title</label>
+                      <label className="font-bold" htmlFor="">
+                        Designation / Title
+                      </label>
                       <br />
                       <input
                         type="text"
@@ -680,8 +777,11 @@ const page = () => {
                         placeholder="Physics Teacher"
                       />
                     </div>
+
                     <div>
-                      <label htmlFor="">Designation / Title Description</label>
+                      <label className="font-bold" htmlFor="">
+                        Designation / Title Description
+                      </label>
                       <br />
                       <input
                         type="text"
@@ -690,23 +790,34 @@ const page = () => {
                       />
                     </div>
                     {/* <div>
-                      <label htmlFor="">Date Of Birth</label>
+                      <label  className="font-bold" htmlFor="">Date Of Birth</label>
                       <br />
                       <input
                         type="date"
                         className="w-[500px] mt-2 bg-[#E9EDF4] p-6 rounded-lg h-[30px]"
                       />
                     </div> */}
-                    <div>
-                      <label htmlFor="">Area Covered</label>
-                      <br />
-                      <input
-                        type="text"
-                        className="w-[500px] mt-2 bg-[#E9EDF4] p-6 rounded-lg h-[30px]"
-                      />
+                    <div className="flex justify-evenly items-center ">
+                      <div>
+                        <div className="font-bold my-4">
+                          <div>
+                            <p className="font-bold my-4">
+                              Area Covered :{" "}
+                              {/* <span className="font-normal">
+                                {data.address || "Jatrabadi, Dhaka"}
+                              </span> */}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                      <div>
+                        <button onClick={() => openModal("address")}>
+                          <FaAngleRight className="text-2xl text-red-600" />
+                        </button>
+                      </div>
                     </div>
                     {/* <div>
-                      <label htmlFor="">Email</label>
+                      <label  className="font-bold" htmlFor="">Email</label>
                       <br />
                       <input
                         type="email"
@@ -715,24 +826,16 @@ const page = () => {
                       />
                     </div> */}
                     {/* <div>
-                      <label htmlFor="">Address</label>
+                      <label  className="font-bold" htmlFor="">Address</label>
                       <br />
                       <input
                         type="text"
                         className="w-[500px] mt-2 bg-[#E9EDF4] p-6 rounded-lg h-[30px]"
                       />
                     </div> */}
-                    <div>
-                      <label htmlFor="">About Teaching</label>
-                      <br />
-                      <input
-                        type="text"
-                        className="w-[500px] mt-2 bg-[#E9EDF4] p-4 textarea textarea-lg rounded-lg h-[100px]"
-                        placeholder="Describe About Your Teaching Passion"
-                      />
-                    </div>
+
                     {/* <div>
-                      <label htmlFor="">Gender</label>
+                      <label  className="font-bold" htmlFor="">Gender</label>
                       <br />
                       <select
                         name=""
@@ -744,7 +847,9 @@ const page = () => {
                       </select>
                     </div> */}
                     <div>
-                      <label htmlFor="">Expected Salary</label>
+                      <label className="font-bold" htmlFor="">
+                        Expected Salary
+                      </label>
                       <br />
                       <input
                         type="text"
@@ -753,7 +858,7 @@ const page = () => {
                       />
                     </div>
                     {/* <div>
-                      <label htmlFor="">Mobile / Phone Number</label>
+                      <label  className="font-bold" htmlFor="">Mobile / Phone Number</label>
                       <br />
                       <input
                         type="text"
@@ -761,7 +866,9 @@ const page = () => {
                       />
                     </div> */}
                     <div>
-                      <label htmlFor="">Period / Class</label>
+                      <label className="font-bold" htmlFor="">
+                        Period / Class
+                      </label>
                       <br />
                       <input
                         type="text"
@@ -770,7 +877,9 @@ const page = () => {
                       />
                     </div>
                     <div>
-                      <label htmlFor="">Duration</label>
+                      <label className="font-bold" htmlFor="">
+                        Duration
+                      </label>
                       <br />
                       <input
                         type="text"
@@ -779,7 +888,9 @@ const page = () => {
                       />
                     </div>
                     <div>
-                      <label htmlFor="">Place Of Learning</label>
+                      <label className="font-bold" htmlFor="">
+                        Place Of Learning
+                      </label>
                       <br />
                       <input
                         type="text"
@@ -788,7 +899,20 @@ const page = () => {
                       />
                     </div>
                     <div>
-                      <label htmlFor="">Tuition Type</label>
+                      <label className="font-bold" htmlFor="">
+                        Through Of Learning
+                      </label>
+                      <br />
+                      <input
+                        type="text"
+                        className="w-[500px] mt-2 bg-[#E9EDF4] p-6 rounded-lg h-[30px]"
+                        placeholder="Online | Offline"
+                      />
+                    </div>
+                    <div>
+                      <label className="font-bold" htmlFor="">
+                        Tuition Type
+                      </label>
                       <br />
                       <input
                         type="text"
@@ -797,7 +921,9 @@ const page = () => {
                       />
                     </div>
                     <div>
-                      <label htmlFor="">Class</label>
+                      <label className="font-bold" htmlFor="">
+                        Class
+                      </label>
                       <br />
                       <input
                         type="text"
@@ -806,7 +932,9 @@ const page = () => {
                       />
                     </div>
                     <div>
-                      <label htmlFor="">Subjects</label>
+                      <label className="font-bold" htmlFor="">
+                        Subjects
+                      </label>
                       <br />
                       <input
                         type="text"
@@ -815,7 +943,9 @@ const page = () => {
                       />
                     </div>
                     <div>
-                      <label htmlFor="">Tuition Time</label>
+                      <label className="font-bold" htmlFor="">
+                        Tuition Time
+                      </label>
                       <br />
                       <input
                         type="text"
@@ -824,7 +954,9 @@ const page = () => {
                       />
                     </div>
                     <div>
-                      <label htmlFor="">Medium</label>
+                      <label className="font-bold" htmlFor="">
+                        Medium
+                      </label>
                       <br />
                       <input
                         type="text"
@@ -833,7 +965,9 @@ const page = () => {
                       />
                     </div>
                     <div>
-                      <label htmlFor="">Current Status For Tuition</label>
+                      <label className="font-bold" htmlFor="">
+                        Current Status For Tuition
+                      </label>
                       <br />
                       <input
                         type="text"
@@ -843,14 +977,43 @@ const page = () => {
                     </div>
                   </div>
                 )}
-                <div className="mt-6">
-                  <label htmlFor="">About You</label>
-                  <br />
-                  <input
-                    type="text"
-                    className="w-[530px] mt-2 bg-[#E9EDF4] p-6 rounded-lg h-[150px]"
-                  />
-                </div>
+                {TeacherDescriptionVisible && (
+                  <div>
+                    <div className="mt-6">
+                      <label className="font-bold" htmlFor="">
+                        About Teacher
+                      </label>
+                      <br />
+                      <input
+                        type="text"
+                        className="w-[500px] mt-2 bg-[#E9EDF4] p-6 rounded-lg h-[150px]"
+                      />
+                    </div>
+                    <div className="mt-2">
+                      <label className="font-bold" htmlFor="">
+                        About Teaching
+                      </label>
+                      <br />
+                      <input
+                        type="text"
+                        className="w-[500px] h-[100px] mt-2 bg-[#E9EDF4] p-4 textarea textarea-lg rounded-lg "
+                        placeholder="Describe About Your Teaching Passion"
+                      />
+                    </div>
+                  </div>
+                )}
+                {StudentDescriptionVisible && (
+                  <div className="mt-6">
+                    <label className="font-bold" htmlFor="">
+                      About Student
+                    </label>
+                    <br />
+                    <input
+                      type="text"
+                      className="w-[500px] mt-2 bg-[#E9EDF4] p-6 rounded-lg h-[150px]"
+                    />
+                  </div>
+                )}
               </form>
             </div>
           </div>

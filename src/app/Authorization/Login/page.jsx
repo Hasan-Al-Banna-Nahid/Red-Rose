@@ -59,11 +59,11 @@ const Login = () => {
         password: password,
       })
       .then((res) => {
-        console.log(res.data.data);
-        console.log(res.data);
+        // console.log(res.data.data);
+        // console.log(res.data);
         const newToken = res.data.data.token;
         const userId = res.data.data.user.id;
-        console.log(userId);
+        // console.log(userId);
         localStorage.setItem("access-token", newToken);
 
         // localStorage.setItem("User", JSON.stringify(res.data.data.user));
@@ -75,6 +75,9 @@ const Login = () => {
             .get(`/my-profile`)
             .then((profileRes) => {
               // Store the profile data in localStorage
+              const token = profileRes.data.token;
+              console.log(profileRes.data.token);
+              localStorage.setItem("access-token", token);
               localStorage.setItem(
                 "User",
                 JSON.stringify(profileRes.data.data)
@@ -83,6 +86,7 @@ const Login = () => {
               // Reload the page and show a success message
               MySwal.fire(res.data.message);
               window.location.reload();
+              navigate.push("/");
             })
             .catch((profileErr) => {
               console.error("Error fetching user profile:", profileErr);

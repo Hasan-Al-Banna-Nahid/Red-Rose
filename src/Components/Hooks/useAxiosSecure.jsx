@@ -13,19 +13,22 @@ const useAxiosSecure = () => {
   const public_key = process.env.NEXT_PUBLIC_API_Public_Key;
 
   useEffect(() => {
-    axiosSecure.interceptors.request.use((config) => {
+    axiosSecure.interceptors.request.use(async (config) => {
+      const token = await getLatestToken();
       config.params = {
         ...config.params,
         public_key: public_key,
       };
       // const token = localStorage.getItem("access-token");
-      const token = localStorage.getItem("access-token");
+      // const token = localStorage.getItem("access-token");
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
       return config;
     });
-
+    async function getLatestToken() {
+      return localStorage.getItem("access-token");
+    }
     axiosSecure.interceptors.response.use(
       (response) => response,
       async (error) => {
@@ -34,7 +37,7 @@ const useAxiosSecure = () => {
           (error.response.status === 401 || error.response.status === 403)
         ) {
           await logOut();
-          navigate.push("/Authorization/Login");
+          // navigate.push("/Authorization/Login");
         }
         return Promise.reject(error);
       }

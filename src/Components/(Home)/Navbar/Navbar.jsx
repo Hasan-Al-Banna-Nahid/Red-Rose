@@ -19,6 +19,8 @@ const Navbar = () => {
   const handleMyProfile = () => {
     axiosSecure.get("/my-profile").then((res) => {
       console.log(res.data);
+      const token = res.data.data.token;
+      // localStorage.setItem("access-token", token);
     });
   };
   return (
@@ -77,12 +79,7 @@ const Navbar = () => {
             </ul>
           </div>
           <Link href={"/"} className="btn btn-ghost normal-case text-xl">
-            <img
-              width={200}
-              height={200}
-              src="https://themewant.com/products/wordpress/edurock/wp-content/uploads/2023/06/logo_1.png"
-              alt=""
-            />
+            <h2 className="TextColor  text-3xl">Red Rose</h2>
           </Link>
         </div>
         <div className="navbar-center hidden lg:flex z-40">

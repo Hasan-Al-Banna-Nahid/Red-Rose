@@ -1,3 +1,21 @@
 .ValuefontSize {
   font-size: 18px;
 }
+/* Define keyframes for the glow animation */
+@keyframes glowAnimationTabs {
+  0% {
+    box-shadow: 0 0 60px rgba(169, 169, 169, 0.205);
+  }
+  50% {
+    box-shadow: 0 0 60px #2f4f4f;
+  }
+  100% {
+    box-shadow: 0 0 60px rgba(36, 1, 102, 0.5);
+  }
+}
+
+/* Apply the glow animation to an element with the 'glowing-shadow' class */
+.glowing-shadowTabs {
+  animation: glowAnimationTabs 2.2s infinite;
+  transition: 1s ease-in-out;
+}

@@ -9,6 +9,7 @@ import SingleTutor from "../SingleTutor";
 import AboutTeacher from "../AboutTeacher";
 import Marquee from "react-fast-marquee";
 import SuggestedTeacher from "../../../../public/asset/banner.webp";
+import "./style.css";
 
 const page = async ({ params }) => {
   const data = await LoadSingleTutorData(params.id);
@@ -114,8 +115,8 @@ const page = async ({ params }) => {
               );
             })}
           </div>
-          <div className="w-[600px] h-[450px] text-center ml-28 mt-4 border-2 ">
-            <Tabs>
+          <div className="w-[600px] h-[450px] text-center ml-28 mt-4 border-2 glowing-shadowTabs ">
+            <Tabs className={""}>
               <TabList className={"flex justify-center items-center "}>
                 <Tab
                   className={`bg-base-200 p-6 w-[400px] border-2 text-center font-bold hover:cursor-pointer`}
@@ -125,7 +126,10 @@ const page = async ({ params }) => {
                 <Tab className="bg-base-200 p-6 w-[400px] border-2  text-center font-bold hover:cursor-pointer">
                   Preferred
                 </Tab>
-                <Tab className="bg-base-200 p-6 w-[400px] border-2  text-center font-bold hover:cursor-pointer">
+                <Tab
+                  selected
+                  className="bg-base-200 p-6 w-[400px] border-2  text-center font-bold hover:cursor-pointer"
+                >
                   Personal Info
                 </Tab>
               </TabList>

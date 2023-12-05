@@ -4,10 +4,10 @@ import AuthProvider from "./Authorization/AuthProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
-// export const metadata = {
-//   title: "Red Rose",
-//   description: "An Proper Learning Site",
-// };
+export const metadata = {
+  title: "Red Rose",
+  description: "An Proper Learning Site",
+};
 
 export default function RootLayout({ children }) {
   return (

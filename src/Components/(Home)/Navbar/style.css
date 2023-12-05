@@ -1,5 +1,11 @@
-.TextColor {
+/* .TextColor {
   background-image: linear-gradient(to right, #cc009c, #ff0000b7);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+} */
+.TextColor {
+  background-image: linear-gradient(to right, #cc009c, #008080);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;

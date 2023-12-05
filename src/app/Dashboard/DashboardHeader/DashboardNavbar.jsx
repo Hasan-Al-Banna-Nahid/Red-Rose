@@ -18,7 +18,7 @@ const DashboardNavbar = () => {
               <FaHome className="text-2xl text-purple-600" />
             </Link>
           </button>
-          <button className="text-blue-600 text-2xl TextColor">
+          <button className="text-blue-600 text-2xl TextColorDashboard">
             <Link href={"/Dashboard"}>Dashboard</Link>
           </button>
 
@@ -26,7 +26,7 @@ const DashboardNavbar = () => {
             <div className="relative inline-block text-left top-2">
               <button
                 onClick={() => setMenuOpen(!menuOpen)}
-                className="inline-flex w-full justify-center rounded-md bg-black/20   TextColor hover:bg-black/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75"
+                className="inline-flex w-full justify-center rounded-md bg-black/20   TextColorDashboard hover:bg-black/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75"
               >
                 Contests
                 <FaAngleDown
@@ -39,20 +39,24 @@ const DashboardNavbar = () => {
               {menuOpen && (
                 <div className="absolute z-40 right-0 mt-2 w-56 p-6 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none">
                   <Link href={"/Dashboard/AllContests"}>
-                    <button className="my-4 TextColor">All Contest</button>
+                    <button className="my-4 TextColorDashboard">
+                      All Contest
+                    </button>
                   </Link>
-                  <button className="my-4 TextColor">My Contest</button>
+                  <button className="my-4 TextColorDashboard">
+                    My Contest
+                  </button>
                 </div>
               )}
             </div>
           </div>
-          <button className="text-blue-600 text-2xl TextColor">
+          <button className="text-blue-600 text-2xl TextColorDashboard">
             Model Test
           </button>
-          <button className="text-blue-600 text-2xl TextColor">
+          <button className="text-blue-600 text-2xl TextColorDashboard">
             <Link href={"/Dashboard/Blog"}>Blog</Link>
           </button>
-          <button className="text-blue-600 text-2xl TextColor">
+          <button className="text-blue-600 text-2xl TextColorDashboard">
             Contact Us
           </button>
         </div>

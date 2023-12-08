@@ -16,12 +16,15 @@ import { useRouter } from "next/navigation";
 import Navbar from "@/Components/(Home)/Navbar/Navbar";
 import useAxiosSecure from "@/Components/Hooks/useAxiosSecure";
 import withReactContent from "sweetalert2-react-content";
+import useAxiosSecureWithoutToken from "@/Components/Hooks/useAxiosSecureWithoutToken";
+import toast, { Toaster } from "react-hot-toast";
 
 const Login = () => {
   const MySwal = withReactContent(Swal);
-
-  const { user } = useContext(AuthContext);
   const axiosSecure = useAxiosSecure();
+  const axiosInstance = useAxiosSecureWithoutToken();
+  const { user } = useContext(AuthContext);
+
   const [isShow, setIsShow] = useState(false);
   const handlePasswordShow = () => {
     setIsShow(!isShow);
@@ -53,90 +56,50 @@ const Login = () => {
     const email = form.email.value;
     const password = form.password.value;
 
-    axiosSecure
+    axiosInstance
       .post("/login", {
         email: email,
         password: password,
       })
       .then((res) => {
-        // console.log(res.data.data);
-        // console.log(res.data);
-        const newToken = res.data.data.token;
-        const userId = res.data.data.user.id;
-        // console.log(userId);
-        localStorage.setItem("access-token", newToken);
-
-        // localStorage.setItem("User", JSON.stringify(res.data.data.user));
-
+        const Token = res?.data?.success?.data?.token;
+        localStorage?.setItem("access-token", Token);
         if (res) {
-          // window.location.reload();
-          // MySwal.fire(res.data.message);
           axiosSecure
             .get(`/my-profile`)
             .then((profileRes) => {
-              // Store the profile data in localStorage
-              const token = profileRes.data.token;
-              console.log(profileRes.data.token);
-              localStorage.setItem("access-token", token);
+              const Token = profileRes?.data?.success?.token;
+              localStorage.setItem("access-token", Token);
               localStorage.setItem(
-                "User",
-                JSON.stringify(profileRes.data.data)
+                "user",
+                JSON.stringify(profileRes?.data?.success?.data?.user)
               );
-
               // Reload the page and show a success message
-              MySwal.fire(res.data.message);
-              window.location.reload();
+              toast.success("Logging in successfully");
+              if (!profileRes) {
+                toast.error(res.data.message);
+                return;
+              }
+              // window.location.reload();
               navigate.push("/");
             })
             .catch((profileErr) => {
               console.error("Error fetching user profile:", profileErr);
-              MySwal.fire("Error fetching user profile");
+              toast.error("Email or Password Did Not Match");
             });
         }
       })
       .catch((err) => {
         console.log(err);
-        MySwal.fire("User Name or Password does not match");
+        toast.error("User Name or Password does not match");
         return;
       });
 
-    // fetch("http://localhost:8000/api/login", {
-    //   method: "POST",
-    //   headers: { "Content-Type": "application/json" },
-    //   body: JSON.stringify({ email, password }),
-    // }).then((res) => {
-    //   if (res.ok) {
-    //     window.location.href = "http://localhost:8000/profile";
-    //   }
-    // });
     return;
-    // accessLogin(email, password)
-    //   .then((result) => {
-    //     console.log(result.user);
-    //     Swal.fire("Good job!", "Login Success!", "success");
-    //     navigate(from, { replace: true });
-    //     // fetch("https://vedhak-iamnahid591998-gmailcom.vercel.app/users", {
-    //     //   method: "POST",
-    //     //   headers: {
-    //     //     "Content-Type": "application/json",
-    //     //   },
-    //     //   body: JSON.stringify({
-    //     //     email: result.user.email,
-    //     //     name: result.user.name,
-    //     //   }),
-    //     // });
-    //   })
-    //   .catch((err) => {
-    //     Swal.fire({
-    //       icon: "error",
-    //       title: "Oops...",
-    //       text: "Email & Password Did not Match",
-    //     });
-    //     return;
-    //   });
   };
   return (
     <div className="w-[1800px] mx-auto">
+      <Toaster />
       <Navbar />
       <div className="auth mx-auto">
         <div className="hero min-h-screen ">

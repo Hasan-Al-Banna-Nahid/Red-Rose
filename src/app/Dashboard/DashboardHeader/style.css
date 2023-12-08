@@ -4,6 +4,12 @@
   background-clip: text;
   color: transparent;
 }
+.TextColorOther {
+  background-image: linear-gradient(to right, #cc009c, teal);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
 .brand {
   background-image: linear-gradient(to right, #2c00cc, #ff0000b7);
   -webkit-background-clip: text;

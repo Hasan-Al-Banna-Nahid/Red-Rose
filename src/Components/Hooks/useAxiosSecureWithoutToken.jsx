@@ -3,32 +3,26 @@ import axios from "axios";
 import { AuthContext } from "@/app/Authorization/AuthProvider";
 import { useRouter } from "next/navigation";
 
-const useAxiosSecure = () => {
+const useAxiosSecureWithoutToken = () => {
   const { logOut } = useContext(AuthContext);
   const navigate = useRouter();
-  const axiosSecure = axios.create({
+  const axiosInstance = axios.create({
     baseURL: "http://localhost:8000/api/v2/app",
   });
 
   const public_key = process.env.NEXT_PUBLIC_API_Public_Key;
 
   useEffect(() => {
-    axiosSecure.interceptors.request.use(async (config) => {
-      const token = await getLatestToken();
+    axiosInstance.interceptors.request.use(async (config) => {
       config.params = {
         ...config.params,
         public_key: public_key,
       };
 
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
       return config;
     });
-    async function getLatestToken() {
-      return localStorage?.getItem("access-token");
-    }
-    axiosSecure.interceptors.response.use(
+
+    axiosInstance.interceptors.response.use(
       (response) => response,
       async (error) => {
         if (
@@ -41,10 +35,10 @@ const useAxiosSecure = () => {
         return Promise.reject(error);
       }
     );
-  }, [logOut, navigate, axiosSecure]);
+  }, [logOut, navigate, axiosInstance]);
 
-  return axiosSecure;
+  return axiosInstance;
   return <div></div>;
 };
 
-export default useAxiosSecure;
+export default useAxiosSecureWithoutToken;

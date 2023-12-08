@@ -14,6 +14,7 @@ const page = () => {
   const [divisions, setDivisions] = useState([]);
   const [cities, setCities] = useState([]);
   const [upazilas, setUpazilas] = useState([]);
+  let [isOpen, setIsOpen] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState("");
   const [selectedDivision, setSelectedDivision] = useState("");
   const [selectedCities, setSelectedCities] = useState("");
@@ -23,33 +24,30 @@ const page = () => {
     axiosSecure
       .get("/division/18")
       .then((res) => {
-        const token = res.data.token;
-        localStorage.setItem("access-token", token);
-        setDivisions(res.data.data.divisions);
+        const Token = res?.data?.success?.token;
+        localStorage?.setItem("access-token", Token);
+        setDivisions(res?.data?.success?.data?.divisions);
 
-        // Chain the next request
         return axiosSecure.get("/all-country");
       })
       .then((res) => {
-        const token = res.data.token;
-        localStorage.setItem("access-token", token);
-        setCountry(res.data.data.countries);
+        const Token = res?.data?.success?.token;
+        localStorage?.setItem("access-token", Token);
+        setCountry(res?.data?.success?.data?.countries);
 
-        // Chain the next request
         return axiosSecure.get("/city/2");
       })
       .then((res) => {
-        const token = res.data.token;
-        localStorage.setItem("access-token", token);
-        setCities(res.data.data.cities);
+        const Token = res?.data?.success?.token;
+        localStorage?.setItem("access-token", Token);
+        setCities(res?.data?.success?.data?.cities);
 
-        // Chain the next request
         return axiosSecure.get("/upazila/7");
       })
       .then((res) => {
-        const token = res.data.token;
-        localStorage.setItem("access-token", token);
-        setUpazilas(res.data.data.upazilas);
+        const Token = res?.data?.success?.token;
+        localStorage?.setItem("access-token", Token);
+        setUpazilas(res?.data?.success?.data?.upazilas);
       })
       .catch((error) => {
         // Handle errors here
@@ -74,7 +72,7 @@ const page = () => {
     setSelectedUpazilas(event.target.value);
     // You can make additional API calls here to fetch data based on the selected division
   };
-  let [isOpen, setIsOpen] = useState(false);
+
   const [TeacherDescriptionVisible, setTeacherDescriptionVisible] =
     useState(false);
   const [StudentDescriptionVisible, setStudentDescriptionVisible] =
@@ -114,8 +112,8 @@ const page = () => {
     setIsOpen(true);
   }
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("User"));
-    setData(user?.user);
+    const user = JSON.parse(localStorage?.getItem("user"));
+    setData(user?.user || user);
   }, []);
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -203,15 +201,17 @@ const page = () => {
                           className="btn   me-4"
                         >
                           <option value="">Select Country</option>
-                          {country.map((c) => (
-                            <option
-                              key={c.id}
-                              value={c.id}
-                              className="btn btn-outline leading-7 text-[18px]"
-                            >
-                              {c.name}
-                            </option>
-                          ))}
+                          {country.map((c) => {
+                            return (
+                              <option
+                                key={c.id}
+                                value={c.id}
+                                className="btn btn-outline leading-7 text-[18px]"
+                              >
+                                {c.name}
+                              </option>
+                            );
+                          })}
                         </select>
 
                         <select
@@ -220,15 +220,17 @@ const page = () => {
                           className=" btn    me-4"
                         >
                           <option value="">Select Division</option>
-                          {divisions.map((d) => (
-                            <option
-                              key={d.id}
-                              value={d.id}
-                              className="btn btn-outline  leading-7 text-[18px]"
-                            >
-                              {d.name}
-                            </option>
-                          ))}
+                          {divisions.map((d) => {
+                            return (
+                              <option
+                                key={d.id}
+                                value={d.id}
+                                className="btn btn-outline  leading-7 text-[18px]"
+                              >
+                                {d.name}
+                              </option>
+                            );
+                          })}
                         </select>
 
                         <select
@@ -237,15 +239,17 @@ const page = () => {
                           className=" btn    me-4"
                         >
                           <option value="">Select Cities</option>
-                          {cities.map((c) => (
-                            <option
-                              key={c.id}
-                              value={c.id}
-                              className="btn btn-outline  leading-7 text-[18px]"
-                            >
-                              {c.name}
-                            </option>
-                          ))}
+                          {cities.map((c) => {
+                            return (
+                              <option
+                                key={c.id}
+                                value={c.id}
+                                className="btn btn-outline  leading-7 text-[18px]"
+                              >
+                                {c.name}
+                              </option>
+                            );
+                          })}
                         </select>
 
                         <select
@@ -254,15 +258,17 @@ const page = () => {
                           className=" btn    me-4"
                         >
                           <option value="">Select Upazila's</option>
-                          {upazilas.map((u) => (
-                            <option
-                              key={u.id}
-                              value={u.id}
-                              className="btn btn-outline   leading-7 text-[18px]"
-                            >
-                              {u.name}
-                            </option>
-                          ))}
+                          {upazilas.map((u) => {
+                            return (
+                              <option
+                                key={u.id}
+                                value={u.id}
+                                className="btn btn-outline   leading-7 text-[18px]"
+                              >
+                                {u.name}
+                              </option>
+                            );
+                          })}
                         </select>
                         <div>
                           <label className="font-bold" htmlFor="">

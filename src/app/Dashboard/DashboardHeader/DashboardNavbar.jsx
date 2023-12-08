@@ -43,9 +43,11 @@ const DashboardNavbar = () => {
                       All Contest
                     </button>
                   </Link>
-                  <button className="my-4 TextColorDashboard">
-                    My Contest
-                  </button>
+                  <Link href={"/Dashboard/AllContests/MyContest"}>
+                    <button className="my-4 TextColorDashboard">
+                      My Contest
+                    </button>
+                  </Link>
                 </div>
               )}
             </div>

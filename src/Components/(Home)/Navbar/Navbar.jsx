@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 
 const Navbar = () => {
   const [isMenuOpen, setMenuOpen] = useState(false);
-  const user = JSON.parse(localStorage.getItem("User"));
+  const user = JSON.parse(localStorage?.getItem("user"));
   const dashboard = useRouter();
   const axiosSecure = useAxiosSecure();
   const toggleMenu = () => {

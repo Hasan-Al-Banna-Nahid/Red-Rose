@@ -19,8 +19,20 @@ const page = () => {
   let [isOpen, setIsOpen] = useState(false);
   let [loading, setLoading] = useState(false);
   const [inputType, setInputType] = useState("");
-  console.log(results);
+  const [selectedOptions, setSelectedOptions] = useState({});
 
+  const handleRadioChange = (questionIds, options, eventId) => {
+    setSelectedOptions((prevOptions) => {
+      return {
+        ...prevOptions,
+        [questionIds]: options,
+        totalquestion: totalQuestion,
+        event_id: eventId,
+      };
+    });
+  };
+
+  console.log(selectedOptions);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -211,91 +223,111 @@ const page = () => {
                     </div>
 
                     <div className="grid grid-cols-2 gap-4 p-4 rounded-lg mx-auto w-full bg-white">
-                      {exam &&
-                        inputType === "takeExam" &&
-                        question.map((exam, index) => {
-                          return (
-                            <div className={`p-8`}>
-                              <form className="text-center">
-                                <h3
-                                  className={`TextColorDashboard ${
-                                    exam?.name?.length === 1 && "text-center"
-                                  } mb-6 text-2xl font-bold`}
-                                >
-                                  {index + 1} {" . "} {exam?.name}
-                                </h3>
+                      {
+                        exam && inputType === "takeExam" && (
+                          <div>
+                            {question &&
+                              question.map((exam) => {
+                                return (
+                                  <div
+                                    className={`p-8 mx-auto w-[1200px]`}
+                                    key={exam.id}
+                                  >
+                                    <div>
+                                      <form className="text-center">
+                                        <h3
+                                          className={`TextColorDashboard ${
+                                            exam?.name?.length === 1 &&
+                                            "text-center"
+                                          } mb-6 text-2xl font-bold`}
+                                        >
+                                          {exam.id} {" . "} {exam.name}
+                                        </h3>
 
-                                <div className="flex items-center justify-center gap-4 text-left my-4">
-                                  <div>
-                                    <input
-                                      type="checkbox"
-                                      name=""
-                                      className="w-4 h-4 border-2 text-left border-purple-700"
-                                      id=""
-                                    />
+                                        {[
+                                          "option1",
+                                          "option2",
+                                          "option3",
+                                          "option4",
+                                        ].map((optionKey, index) => (
+                                          <div
+                                            key={index}
+                                            className="flex items-center justify-center gap-4 text-left my-4"
+                                          >
+                                            <input
+                                              type="radio"
+                                              name={`radio-${exam.id}`}
+                                              className="w-6 h-6 border-2  text-left border-purple-700"
+                                              id={`radio-${exam.id}-${index} `}
+                                              onChange={() =>
+                                                handleRadioChange(
+                                                  [exam.id],
+                                                  [exam[optionKey]],
+                                                  exam.event_id
+                                                )
+                                              }
+                                              checked={
+                                                selectedOptions[
+                                                  exam.id
+                                                ]?.[0] === exam[optionKey]
+                                              }
+                                            />
+                                            <div className="flex items-center">
+                                              <h2 className="text-[20px] font-bold">
+                                                {exam[optionKey]}
+                                              </h2>
+                                            </div>
+                                          </div>
+                                        ))}
+                                      </form>
+                                    </div>
                                   </div>
-                                  <div className="flex items-center">
-                                    {" "}
-                                    <h2 className="text-[20px] font-bold">
-                                      {exam?.option1}
-                                    </h2>
-                                  </div>
-                                </div>
-
-                                <div className="flex items-center justify-center gap-4 text-left my-4">
-                                  <div>
-                                    <input
-                                      type="checkbox"
-                                      name=""
-                                      className="w-4 h-4 border-2 text-left border-purple-700"
-                                      id=""
-                                    />
-                                  </div>
-                                  <div className="flex items-center">
-                                    {" "}
-                                    <h2 className="text-[20px] font-bold">
-                                      {exam?.option2}
-                                    </h2>
-                                  </div>
-                                </div>
-
-                                <div className="flex items-center justify-center gap-4 text-left my-4">
-                                  <div>
-                                    <input
-                                      type="checkbox"
-                                      name=""
-                                      className="w-4 h-4 border-2 text-left border-purple-700"
-                                      id=""
-                                    />
-                                  </div>
-                                  <div className="flex items-center">
-                                    {" "}
-                                    <h2 className="text-[20px] font-bold">
-                                      {exam?.option3}
-                                    </h2>
-                                  </div>
-                                </div>
-
-                                <div className="flex items-center justify-center gap-4 text-left my-4">
-                                  <div>
-                                    <input
-                                      type="checkbox"
-                                      name=""
-                                      className="w-4 h-4 border-2 text-left border-purple-700"
-                                      id=""
-                                    />
-                                  </div>
-                                  <div className="flex items-center">
-                                    {" "}
-                                    <h2 className="text-[20px] font-bold">
-                                      {exam?.option4}
-                                    </h2>
-                                  </div>
-                                </div>
-                              </form>
+                                );
+                              })}
+                            <div className="w-[1300px] mx-auto p-4">
+                              <button
+                                type="submit"
+                                className="btn bg-gradient-to-r from-[#cc009c] to-[#ff0000b7] btn-outline text-white w-full"
+                              >
+                                Submit
+                              </button>
                             </div>
-                          );
-                        })}
+                            {/* <div>
+                              <h3 className="text-2xl TextColorOther">
+                                Selected Options:
+                              </h3>
+                              <ul>
+                                {Object.keys(selectedOptions).map(
+                                  (questionId, index) => (
+                                    <li key={index}>
+                                      <span className="TextColorDashboard text-[22px] my-6 font-bold">
+                                        Question {questionId}:
+                                      </span>{" "}
+                                      <span className="TextColorDashboard ms-2 text-2xl font-bold">
+                                        {
+                                          question.find(
+                                            (q) =>
+                                              q.id.toString() === questionId
+                                          )?.name
+                                        }
+                                      </span>
+                                      ,{" "}
+                                      <span className="TextColorDashboard text-[22px] my-6 font-bold">
+                                        Your Answer {" : "}
+                                      </span>
+                                      :{" "}
+                                      <span className="TextColorOther ms-2 text-2xl font-bold">
+                                        {selectedOptions[questionId]}
+                                      </span>
+                                    </li>
+                                  )
+                                )}
+                              </ul>
+                            </div> */}
+                          </div>
+                        )
+                        // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+                      }
                     </div>
 
                     <div className="  p-4 rounded-lg mx-auto w-full bg-white">
@@ -388,7 +420,7 @@ const page = () => {
         <div className="grid grid-cols-3 mx-auto gap-6 p-6">
           {events && events.length > 0
             ? events.map((event) => {
-                const eventDateString = "2023-12-09"; // Replace this with your actual date from the database
+                const eventDateString = "2023-12-10"; // Replace this with your actual date from the database
 
                 const today = moment().format("YYYY-MM-DD");
                 const eventDate = moment(eventDateString).format("YYYY-MM-DD");

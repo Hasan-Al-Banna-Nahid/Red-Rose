@@ -1,10 +1,11 @@
 "use client";
-import React, { useEffect, useState, Fragment } from "react";
+import React, { useEffect, useState, Fragment, useRef } from "react";
 import DashboardNavbar from "../../DashboardHeader/DashboardNavbar";
 import useAxiosSecure from "@/Components/Hooks/useAxiosSecure";
 import { Transition, Dialog } from "@headlessui/react";
 
 import moment from "moment";
+import toast, { Toaster } from "react-hot-toast";
 
 const page = () => {
   const axiosSecure = useAxiosSecure();
@@ -13,32 +14,41 @@ const page = () => {
   const [participants, setParticipants] = useState([]);
   const [exam, setExam] = useState([] || {} || null);
   const [question, setQuestion] = useState([]);
+  const [eventId, setEventID] = useState(Number || 0);
   const [totalQuestion, setTotalQuestion] = useState(Number || 0);
   const [examDuration, setExamDuration] = useState(Number || 0);
   const [results, setResults] = useState([]);
   let [isOpen, setIsOpen] = useState(false);
   let [loading, setLoading] = useState(false);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [remainingTime, setRemainingTime] = useState(null);
+  const [userAnswered, setUserAnswered] = useState(false);
   const [inputType, setInputType] = useState("");
-  const [selectedOptions, setSelectedOptions] = useState({});
 
-  const handleRadioChange = (questionIds, options, eventId) => {
+  const [selectedOptions, setSelectedOptions] = useState({
+    ans: [],
+  });
+  useEffect(() => {
+    question.map((event) => setEventID(event.event_id));
+  }, [question]);
+  const uniqueNameCount = new Set(question.map((e) => e.name)).size;
+  const handleRadioChange = (questionIds, options) => {
     setSelectedOptions((prevOptions) => {
-      return {
+      const updatedOptions = {
         ...prevOptions,
-        [questionIds]: options,
-        totalquestion: totalQuestion,
-        event_id: eventId,
+        ans: [...prevOptions.ans, questionIds[0], options],
       };
+      return updatedOptions;
     });
+    setUserAnswered(true);
   };
-
-  console.log(selectedOptions);
+  console.log(selectedOptions.ans);
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
         const res = await axiosSecure.get("/event/my");
-        const Token = res?.data?.success?.token;
+        let Token = res?.data?.success?.token;
         localStorage.setItem("access-token", Token);
         setEvents(res?.data?.success?.data?.events);
         setLoading(false);
@@ -64,14 +74,14 @@ const page = () => {
   };
   const handleSyllabus = (id) => {
     axiosSecure.get(`/event/syllabus/${id}`).then((res) => {
-      const Token = res?.data?.success?.token;
+      let Token = res?.data?.success?.token;
       localStorage?.setItem("access-token", Token);
       setSyllabus(res?.data?.success?.data?.syllabs?.description);
     });
   };
   const handleParticipant = (id) => {
     axiosSecure.get(`/event/participant/${id}`).then((res) => {
-      const Token = res?.data?.success?.token;
+      let Token = res?.data?.success?.token;
       localStorage?.setItem("access-token", Token);
 
       setParticipants(res?.data?.success?.data?.enrolls?.users);
@@ -79,26 +89,98 @@ const page = () => {
   };
   let currentDate = new Date().toISOString().split("T")[0]; // Get the current date in the format "YYYY-MM-DD"
 
+  const handleNextQuestion = () => {
+    setUserAnswered(false); // Reset the userAnswered flag
+    setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
+    setRemainingTime(examDuration); // Reset remaining time for the next question
+  };
+
+  useEffect(() => {
+    let timer;
+    if (remainingTime !== null && remainingTime > 0) {
+      timer = setTimeout(() => {
+        setRemainingTime((prevTime) => prevTime - 1);
+      }, 1000);
+    } else if (!userAnswered) {
+      // Automatically move to the next question if the user didn't answer in time
+      handleNextQuestion();
+    }
+
+    return () => clearTimeout(timer);
+  }, [remainingTime, userAnswered]);
+
   const handleTakeExam = (id) => {
     axiosSecure.get(`/event/take-exam/${id}`).then((res) => {
-      const Token = res?.data?.success?.token;
+      setLoading(true);
+
+      let Token = res?.data?.success?.token;
       localStorage?.setItem("access-token", Token);
-      // setExam(res?.data?.success?.data);
       setQuestion(res?.data?.success?.data?.question);
       setTotalQuestion(res?.data?.success?.data?.totalquestion);
       setExamDuration(res?.data?.success?.data?.event?.duration);
+      setRemainingTime(examDuration);
+      setLoading(false);
     });
   };
+
   const handleResult = (event) => {
     axiosSecure.get(`/event/get-result/${event.id}`).then((res) => {
-      const Token = res?.data?.success?.token;
+      let Token = res?.data?.success?.token;
       localStorage?.setItem("access-token", Token);
       setResults(res?.data?.success?.data?.results);
     });
   };
+  const timeForEachQuestion = examDuration / totalQuestion;
+  console.log(timeForEachQuestion);
+  const progress = (
+    <progress
+      className="progress progress-success w-56"
+      value="100"
+      max="100"
+    ></progress>
+  );
+  const handleSubmitContestExam = (event) => {
+    axiosSecure
+      .post("/event/submit-exam-for-result", {
+        event_id: event,
+        totalquestion: totalQuestion,
+        ans: selectedOptions.ans,
+      })
+      .then((res) => {
+        let Token = res?.data?.success?.token || res?.data?.error?.token;
+        localStorage?.setItem("access-token", Token);
+        console.log(res);
+        if (res?.data?.success) {
+          toast.success("Your Exam Is Successfully submitted");
+          console.log(res);
+          setTimeout(() => {
+            closeModal();
+          }, 1500);
+        }
+        if (res?.data?.error) {
+          toast.error(res?.data?.error?.message);
+          return;
+        }
+      })
+      .catch((err) => {
+        console.error("Error submitting exam:", err);
+        toast.error("Error submitting your exam. Please try again later.");
+      });
+  };
+  const optionsArray = ["option1", "option2", "option3", "option4"];
+
+  // Function to convert option string to number
+  const convertOptionToNumber = (option) => {
+    const match = option.match(/\d+/); // Extracts the numeric part from the string
+    return match ? parseInt(match[0], 10) : 0; // Converts the numeric part to an integer
+  };
+
+  // Map the array of options to an array of numbers
+  const numbersArray = optionsArray.map(convertOptionToNumber);
   return (
     <div className="w-[2000px] bg-base-200">
       <DashboardNavbar />
+      <Toaster />
       {loading && (
         <div className="w-[300px] mx-auto">
           <span className="loading loading-infinity loading-lg  text-center font-bold"></span>
@@ -130,11 +212,20 @@ const page = () => {
                 leaveTo="opacity-0 scale-95"
               >
                 <Dialog.Panel
-                  className={` min-h-full ${
-                    inputType === "syllabus" || inputType === "participants"
-                      ? "w-[800px]"
-                      : "w-[1500px]"
-                  } 
+                  className={` min-h-full 
+                  ${
+                    inputType === "takeExam" &&
+                    uniqueNameCount > 1 &&
+                    "w-[900px]"
+                  }
+                  ${
+                    inputType === "takeExam" &&
+                    uniqueNameCount === 1 &&
+                    "w-[1400px]"
+                  }
+                  ${inputType === "participants" && "w-[1200px]"}
+                  ${inputType === "syllabus" && "w-[800px]"}
+                  ${inputType === "results" && "w-[1800px]"}
                     
                   transform mx-auto overflow-hidden rounded-2xl p-6 text-left align-middle shadow-xl transition-all`}
                 >
@@ -223,76 +314,105 @@ const page = () => {
                     </div>
 
                     <div className="grid grid-cols-2 gap-4 p-4 rounded-lg mx-auto w-full bg-white">
-                      {
-                        exam && inputType === "takeExam" && (
-                          <div>
-                            {question &&
-                              question.map((exam) => {
-                                return (
+                      {exam && inputType === "takeExam" && (
+                        <div>
+                          {question &&
+                            question.map((exam) => {
+                              return (
+                                <div>
                                   <div
-                                    className={`p-8 mx-auto w-[1200px]`}
+                                    className={`p-4  w-[1200px] `}
                                     key={exam.id}
                                   >
                                     <div>
-                                      <form className="text-center">
-                                        <h3
-                                          className={`TextColorDashboard ${
-                                            exam?.name?.length === 1 &&
-                                            "text-center"
-                                          } mb-6 text-2xl font-bold`}
-                                        >
-                                          {exam.id} {" . "} {exam.name}
-                                        </h3>
-
-                                        {[
-                                          "option1",
-                                          "option2",
-                                          "option3",
-                                          "option4",
-                                        ].map((optionKey, index) => (
-                                          <div
-                                            key={index}
-                                            className="flex items-center justify-center gap-4 text-left my-4"
+                                      <div>
+                                        <div>
+                                          <h3
+                                            className={`TextColorDashboard ${
+                                              exam?.name?.length === 1 &&
+                                              "text-center"
+                                            } mb-6 text-2xl font-bold`}
                                           >
-                                            <input
-                                              type="radio"
-                                              name={`radio-${exam.id}`}
-                                              className="w-6 h-6 border-2  text-left border-purple-700"
-                                              id={`radio-${exam.id}-${index} `}
-                                              onChange={() =>
+                                            {
+                                              <span className="text-3xl TextColorDashboard">
+                                                *
+                                              </span>
+                                            }{" "}
+                                            {exam.name}
+                                          </h3>
+
+                                          {[
+                                            "option1",
+                                            "option2",
+                                            "option3",
+                                            "option4",
+                                          ].map((optionKey, index) => (
+                                            <div
+                                              key={index}
+                                              onClick={() =>
                                                 handleRadioChange(
                                                   [exam.id],
-                                                  [exam[optionKey]],
-                                                  exam.event_id
+                                                  convertOptionToNumber(
+                                                    optionKey
+                                                  )
                                                 )
                                               }
-                                              checked={
-                                                selectedOptions[
-                                                  exam.id
-                                                ]?.[0] === exam[optionKey]
-                                              }
-                                            />
-                                            <div className="flex items-center">
-                                              <h2 className="text-[20px] font-bold">
-                                                {exam[optionKey]}
-                                              </h2>
+                                            >
+                                              <label className="flex items-center justify-start gap-4 text-left my-4 hover:cursor-pointer">
+                                                <input
+                                                  type="radio"
+                                                  name={`radio-${exam.id}`}
+                                                  className="w-6 h-6 border-2  border-purple-700"
+                                                  id={`radio-${exam.id}-${index} `}
+                                                  onChange={() =>
+                                                    handleRadioChange(
+                                                      [exam.id],
+                                                      convertOptionToNumber(
+                                                        optionKey
+                                                      )
+                                                    )
+                                                  }
+                                                  checked={selectedOptions[
+                                                    exam.id
+                                                  ]?.includes(exam[optionKey])}
+                                                />
+                                                <h2 className="text-[20px] font-bold">
+                                                  {exam[optionKey]}
+                                                </h2>
+                                              </label>
+                                              {/* <div
+                                                className="flex items-center"
+                                                
+                                              >
+                                                <h2 className="text-[20px] font-bold">
+                                                  {exam[optionKey]}
+                                                </h2>
+                                              </div> */}
                                             </div>
-                                          </div>
-                                        ))}
-                                      </form>
+                                          ))}
+                                        </div>
+                                      </div>
                                     </div>
                                   </div>
-                                );
-                              })}
-                            <div className="w-[1300px] mx-auto p-4">
-                              <button
-                                type="submit"
-                                className="btn bg-gradient-to-r from-[#cc009c] to-[#ff0000b7] btn-outline text-white w-full"
-                              >
-                                Submit
-                              </button>
-                            </div>
-                            {/* <div>
+                                </div>
+                              );
+                            })}
+                          <div className="w-[1200px] mx-auto p-4">
+                            <button
+                              onClick={(e) => {
+                                e.preventDefault();
+                                handleSubmitContestExam(eventId);
+                              }}
+                              className={`bg-gradient-to-r from-[#cc009c] to-[#ff0000b7] btn btn-outline ${
+                                uniqueNameCount === 1 && "w-full"
+                              } ${
+                                uniqueNameCount > 1 && "w-[710px]"
+                              } mx-auto text-white`}
+                            >
+                              Submit
+                            </button>
+                          </div>
+                          {/* <div>
                               <h3 className="text-2xl TextColorOther">
                                 Selected Options:
                               </h3>
@@ -324,10 +444,8 @@ const page = () => {
                                 )}
                               </ul>
                             </div> */}
-                          </div>
-                        )
-                        // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-                      }
+                        </div>
+                      )}
                     </div>
 
                     <div className="  p-4 rounded-lg mx-auto w-full bg-white">
@@ -420,7 +538,7 @@ const page = () => {
         <div className="grid grid-cols-3 mx-auto gap-6 p-6">
           {events && events.length > 0
             ? events.map((event) => {
-                const eventDateString = "2023-12-10"; // Replace this with your actual date from the database
+                const eventDateString = "2023-12-11"; // Replace this with your actual date from the database
 
                 const today = moment().format("YYYY-MM-DD");
                 const eventDate = moment(eventDateString).format("YYYY-MM-DD");

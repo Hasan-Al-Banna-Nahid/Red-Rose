@@ -1,0 +1,11 @@
+{
+  "editor.fontFamily": "FiraCode Nerd Font Mono,Caskaydia Cove Nerd Font,Consolas, 'Courier New', monospace",
+  "terminal.integrated.fontFamily": "FiraCode Nerd Font Mono,Caskaydia Cove Nerd Font,Consolas, 'Courier New', monospace",
+  "terminal.integrated.fontWeightBold": "bold",
+  "editor.lineHeight": 2,
+  "editor.fontLigatures": true,
+  "editor.cursorBlinking": "blink",
+  "terminal.integrated.fontSize": 17,
+  "terminal.integrated.fontWeight": "bold",
+  "editor.fontSize": 20
+}

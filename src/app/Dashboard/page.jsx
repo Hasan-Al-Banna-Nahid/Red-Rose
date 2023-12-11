@@ -24,28 +24,28 @@ const page = () => {
     axiosSecure
       .get("/division/18")
       .then((res) => {
-        const Token = res?.data?.success?.token;
+        let Token = res?.data?.success?.token;
         localStorage?.setItem("access-token", Token);
         setDivisions(res?.data?.success?.data?.divisions);
 
         return axiosSecure.get("/all-country");
       })
       .then((res) => {
-        const Token = res?.data?.success?.token;
+        let Token = res?.data?.success?.token;
         localStorage?.setItem("access-token", Token);
         setCountry(res?.data?.success?.data?.countries);
 
         return axiosSecure.get("/city/2");
       })
       .then((res) => {
-        const Token = res?.data?.success?.token;
+        let Token = res?.data?.success?.token;
         localStorage?.setItem("access-token", Token);
         setCities(res?.data?.success?.data?.cities);
 
         return axiosSecure.get("/upazila/7");
       })
       .then((res) => {
-        const Token = res?.data?.success?.token;
+        let Token = res?.data?.success?.token;
         localStorage?.setItem("access-token", Token);
         setUpazilas(res?.data?.success?.data?.upazilas);
       })

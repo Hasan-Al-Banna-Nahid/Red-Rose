@@ -20,7 +20,7 @@ const page = () => {
     const fetchData = async () => {
       try {
         const res = await axiosSecure.get("/event/all");
-        const Token = res?.data?.success?.token;
+        let Token = res?.data?.success?.token;
         localStorage.setItem("access-token", Token);
         setEvents(res?.data?.success?.data?.events);
       } catch (error) {
@@ -40,14 +40,14 @@ const page = () => {
   }
   const handleSyllabus = (id) => {
     axiosSecure.get(`/event/syllabus/${id}`).then((res) => {
-      const Token = res?.data?.success?.token;
+      let Token = res?.data?.success?.token;
       localStorage?.setItem("access-token", Token);
       setSyllabus(res?.data?.success?.data?.syllabs?.description);
     });
   };
   const handleParticipant = (id) => {
     axiosSecure.get(`/event/participant/${id}`).then((res) => {
-      const Token = res?.data?.success?.token;
+      let Token = res?.data?.success?.token;
       localStorage?.setItem("access-token", Token);
 
       setParticipants(res?.data?.success?.data?.enrolls?.users);
@@ -61,7 +61,7 @@ const page = () => {
       })
       .then((res) => {
         try {
-          const Token = res?.data?.success?.token || res?.data?.error?.token;
+          let Token = res?.data?.success?.token || res?.data?.error?.token;
           const alreadyEnrolled = res?.data?.error?.code;
           setAlreadyEnrolled(alreadyEnrolled);
           localStorage?.setItem("access-token", Token);

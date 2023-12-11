@@ -11,6 +11,7 @@
   "dependencies": {
     "@headlessui/react": "^1.7.17",
     "axios": "^1.6.2",
+    "convert-string-to-number": "^1.0.3",
     "crypto-js": "^4.2.0",
     "firebase": "^10.6.0",
     "localforage": "^1.10.0",
@@ -29,7 +30,9 @@
     "sort-by": "^1.2.0",
     "styled-components": "^4.0.0",
     "sweetalert2": "^11.10.0",
-    "sweetalert2-react-content": "^5.0.7"
+    "sweetalert2-react-content": "^5.0.7",
+    "to-integer": "^1.0.1",
+    "to-num": "^1.0.1"
   },
   "devDependencies": {
     "autoprefixer": "^10.0.1",

@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import React, { useEffect, useState, Fragment } from "react";
-import photo from "../../../public/asset/banner.webp";
+import photo from "../../../public/asset/banner.png";
 import { FaAngleRight, FaFacebook } from "react-icons/fa";
 import { Dialog, Transition } from "@headlessui/react";
 import DashboardNavbar from "./DashboardHeader/DashboardNavbar";

@@ -217,7 +217,7 @@ const Tutor = () => {
                 return (
                   <div key={index}>
                     <img
-                      src="./asset/banner.webp"
+                      src="./asset/banner.png"
                       width={800}
                       height={800}
                       className="rounded-lg"

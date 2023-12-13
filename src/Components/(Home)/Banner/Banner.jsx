@@ -1,16 +1,44 @@
+"use client";
 import Image from "next/image";
-import banner from "../../../../public/asset/banner.webp";
+import banner from "../../../../public/asset/banner.png";
 import "./Banner.css";
+import { TypeAnimation } from "react-type-animation";
 const Banner = () => {
   return (
-    <div className=" p-14  rounded-md bgColor">
+    <div className=" p-14  rounded-md ">
       <div className="lg:flex justify-center items-center  gap-24 mx-auto w-full ">
         <div className=" p-12">
           {/* <p className="text-red-600 font-bold">EDUCATION SOLUTION</p> */}
-          <h3 className="font-bold text-slate-800 text-5xl mt-8 welcomeText mr-16">
-            <span className="TextColorDashboard ml-16">Welcome To</span> <br />
-            <span className="text-[#F2277E] ">Red Rose </span>
-            <span className="TextColor">Academy</span>
+          <h3 className="font-bold text-slate-800 mt-8 welcomeText ">
+            <span className="text-4xl">Welcome</span>{" "}
+            <TypeAnimation
+              sequence={[
+                // Same substring at the start will only be typed out once, initially
+                "To Red Rose Academy|",
+                1000, // wait 1s before replacing "Mice" with "Hamsters"
+                "",
+                1000,
+                // "We produce food for Guinea Pigs",
+                // 1000,
+                // "We produce food for Chinchillas",
+                // 1000,
+              ]}
+              wrapper="span"
+              role="cell"
+              speed={50}
+              style={{
+                fontSize: "2em",
+                display: "inline-block",
+                marginTop: "18px",
+              }}
+              className="TextColor"
+              repeat={Infinity}
+            />
+            <br />
+            <span className="text-3xl text-blue-600 font-bold">
+              {" "}
+              Largest Online Education Hub In Bangladesh
+            </span>
           </h3>
 
           <div className="flex  items-center gap-6 mt-8 mx-auto w-[400px]">
@@ -27,7 +55,7 @@ const Banner = () => {
             </div>
           </div>
         </div>
-        <div className={"glowing-image-wrapper bg-transparent"}>
+        <div className={"glowing-image-wrapper "}>
           <div>
             <Image
               src={banner}

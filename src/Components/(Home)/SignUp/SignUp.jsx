@@ -10,7 +10,7 @@ import "./style.css";
 const SignUp = () => {
   return (
     <div>
-      <div className="signUpBG mt-[200px] relative my-12">
+      <div className="signUpBG mt-[200px] relative  my-12">
         <div className=" w-[1200px] flex justify-center    h-[450px]  p-6">
           <div>
             <h2 className="text-purple-800 font-bold text-3xl text-center absolute left-[270px] border-b-2 border-white">

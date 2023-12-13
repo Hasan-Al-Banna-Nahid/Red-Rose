@@ -1,24 +1,20 @@
-.particles {
-  background-image: url("../../../../public//asset//banner.webp");
-  background-size: cover;
-}
 .welcomeText {
   line-height: 4rem;
 }
 .bgColor {
-  background-image: linear-gradient(to right, #1f2b49, white);
+  background-image: linear-gradient(to right, #1f2b49b7, white);
 }
 /* styles.css */
 
 @keyframes glowAnimation {
   0% {
-    box-shadow: 0 0 20px rgba(0, 47, 255, 0.5);
+    box-shadow: 0 0 0px rgba(0, 47, 255, 0.5);
   }
   50% {
-    box-shadow: 0 0 20px rgba(255, 0, 119, 0.8);
+    box-shadow: 0 0 0px rgba(255, 0, 119, 0.8);
   }
   100% {
-    box-shadow: 0 0 30px rgba(0, 31, 18, 0.5);
+    box-shadow: 0 0 0px rgba(0, 31, 18, 0.5);
   }
 }
 
@@ -27,8 +23,8 @@
   display: inline-block;
   overflow: hidden;
   border-radius: 8px; /* Adjust the border radius as needed */
-  animation: glowAnimation 3s infinite; /* Adjust the duration as needed */
-  box-shadow: 0 0 70px rgba(0, 31, 18, 0.5); /* Initial box-shadow for when animation is not running */
+  animation: glowAnimation 3s infinite;
+  /* box-shadow: 0 0 10px rgba(0, 31, 18, 0.5); */
 }
 
 .glowing-image {

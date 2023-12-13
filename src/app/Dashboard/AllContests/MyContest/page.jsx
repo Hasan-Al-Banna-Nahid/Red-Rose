@@ -42,7 +42,7 @@ const page = () => {
     });
     setUserAnswered(true);
   };
-  console.log(selectedOptions.ans);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -131,7 +131,7 @@ const page = () => {
     });
   };
   const timeForEachQuestion = examDuration / totalQuestion;
-  console.log(timeForEachQuestion);
+
   const progress = (
     <progress
       className="progress progress-success w-56"
@@ -538,7 +538,7 @@ const page = () => {
         <div className="grid grid-cols-3 mx-auto gap-6 p-6">
           {events && events.length > 0
             ? events.map((event) => {
-                const eventDateString = "2023-12-11"; // Replace this with your actual date from the database
+                const eventDateString = "2023-12-13"; // Replace this with your actual date from the database
 
                 const today = moment().format("YYYY-MM-DD");
                 const eventDate = moment(eventDateString).format("YYYY-MM-DD");

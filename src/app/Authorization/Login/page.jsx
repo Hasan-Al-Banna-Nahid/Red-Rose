@@ -66,10 +66,11 @@ const Login = () => {
         localStorage?.setItem("access-token", Token);
         if (res) {
           axiosSecure
-            .get(`/my-profile`)
+            .get(`/profile/my`)
             .then((profileRes) => {
               const Token = profileRes?.data?.success?.token;
               localStorage.setItem("access-token", Token);
+
               localStorage.setItem(
                 "user",
                 JSON.stringify(profileRes?.data?.success?.data?.user)

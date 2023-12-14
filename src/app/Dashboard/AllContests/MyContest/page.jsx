@@ -6,6 +6,8 @@ import { Transition, Dialog } from "@headlessui/react";
 
 import moment from "moment";
 import toast, { Toaster } from "react-hot-toast";
+import Countdown from "react-countdown";
+import { CountdownCircleTimer } from "react-countdown-circle-timer";
 
 const page = () => {
   const axiosSecure = useAxiosSecure();
@@ -20,11 +22,16 @@ const page = () => {
   const [results, setResults] = useState([]);
   let [isOpen, setIsOpen] = useState(false);
   let [loading, setLoading] = useState(false);
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [remainingTime, setRemainingTime] = useState(null);
+  // const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const timeForEachQuestion = examDuration / totalQuestion;
+  const [remainingTime, setRemainingTime] = useState(timeForEachQuestion);
   const [userAnswered, setUserAnswered] = useState(false);
   const [inputType, setInputType] = useState("");
 
+  const [timeRemaining, setTimeRemaining] = useState();
+  const [currentQuestion, setCurrentQuestion] = useState(
+    Number || 0 || Boolean
+  );
   const [selectedOptions, setSelectedOptions] = useState({
     ans: [],
   });
@@ -32,7 +39,9 @@ const page = () => {
     question.map((event) => setEventID(event.event_id));
   }, [question]);
   const uniqueNameCount = new Set(question.map((e) => e.name)).size;
+
   const handleRadioChange = (questionIds, options) => {
+    setCurrentQuestion(questionIds[0]);
     setSelectedOptions((prevOptions) => {
       const updatedOptions = {
         ...prevOptions,
@@ -41,8 +50,48 @@ const page = () => {
       return updatedOptions;
     });
     setUserAnswered(true);
+
+    handleNextQuestion();
   };
 
+  // Display remaining time for the current question
+  const formatTime = (time) => {
+    // Calculate minutes by dividing time by 60,000 milliseconds (1 minute)
+    const minutes = Math.floor(time / (60 * 1000));
+
+    // Calculate seconds by taking the remainder when dividing by 60 seconds
+    const seconds = Math.floor((time % (60 * 1000)) / 1000);
+
+    // Return the formatted string with leading zeros
+    return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(
+      2,
+      "0"
+    )}`;
+  };
+
+  let timer;
+  useEffect(() => {
+    if (remainingTime > 0 && currentQuestion < totalQuestion) {
+      timer = setInterval(() => {
+        setRemainingTime((prevTime) => prevTime - 1);
+      }, 1000);
+    }
+
+    return () => clearInterval(timer); // Remove this line to allow the timer to continue running
+  }, [remainingTime, currentQuestion]);
+
+  const handleNextQuestion = () => {
+    // Move to the next question
+    setCurrentQuestion((prevIndex) => prevIndex + 1);
+
+    // Check if there are more questions
+    if (currentQuestion < totalQuestion - 1) {
+      // Reset timer and set remaining time for the next question
+      setRemainingTime();
+    }
+
+    setUserAnswered(false);
+  };
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -89,26 +138,6 @@ const page = () => {
   };
   let currentDate = new Date().toISOString().split("T")[0]; // Get the current date in the format "YYYY-MM-DD"
 
-  const handleNextQuestion = () => {
-    setUserAnswered(false); // Reset the userAnswered flag
-    setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
-    setRemainingTime(examDuration); // Reset remaining time for the next question
-  };
-
-  useEffect(() => {
-    let timer;
-    if (remainingTime !== null && remainingTime > 0) {
-      timer = setTimeout(() => {
-        setRemainingTime((prevTime) => prevTime - 1);
-      }, 1000);
-    } else if (!userAnswered) {
-      // Automatically move to the next question if the user didn't answer in time
-      handleNextQuestion();
-    }
-
-    return () => clearTimeout(timer);
-  }, [remainingTime, userAnswered]);
-
   const handleTakeExam = (id) => {
     axiosSecure.get(`/event/take-exam/${id}`).then((res) => {
       setLoading(true);
@@ -118,7 +147,14 @@ const page = () => {
       setQuestion(res?.data?.success?.data?.question);
       setTotalQuestion(res?.data?.success?.data?.totalquestion);
       setExamDuration(res?.data?.success?.data?.event?.duration);
-      setRemainingTime(examDuration);
+      setCurrentQuestion(0); // Reset current question index
+      setRemainingTime();
+      setRemainingTime(res?.data?.success?.data?.event?.duration);
+      // setTimeRemaining(
+      //   setTimeout(() => {
+      //     examDuration / totalQuestion;
+      //   }, 0)
+      // );
       setLoading(false);
     });
   };
@@ -130,15 +166,7 @@ const page = () => {
       setResults(res?.data?.success?.data?.results);
     });
   };
-  const timeForEachQuestion = examDuration / totalQuestion;
 
-  const progress = (
-    <progress
-      className="progress progress-success w-56"
-      value="100"
-      max="100"
-    ></progress>
-  );
   const handleSubmitContestExam = (event) => {
     axiosSecure
       .post("/event/submit-exam-for-result", {
@@ -315,72 +343,79 @@ const page = () => {
 
                     <div className="grid grid-cols-2 gap-4 p-4 rounded-lg mx-auto w-full bg-white">
                       {exam && inputType === "takeExam" && (
-                        <div>
-                          {question &&
-                            question.map((exam) => {
-                              return (
-                                <div>
-                                  <div
-                                    className={`p-4  w-[1200px] `}
-                                    key={exam.id}
-                                  >
-                                    <div>
+                        <>
+                          <div>
+                            {question &&
+                              question.map((exam) => {
+                                return (
+                                  <div>
+                                    <div
+                                      className={`p-4  w-[1200px] `}
+                                      key={exam.id}
+                                    >
                                       <div>
                                         <div>
-                                          <h3
-                                            className={`TextColorDashboard ${
-                                              exam?.name?.length === 1 &&
-                                              "text-center"
-                                            } mb-6 text-2xl font-bold`}
-                                          >
-                                            {
-                                              <span className="text-3xl TextColorDashboard">
-                                                *
-                                              </span>
-                                            }{" "}
-                                            {exam.name}
-                                          </h3>
-
-                                          {[
-                                            "option1",
-                                            "option2",
-                                            "option3",
-                                            "option4",
-                                          ].map((optionKey, index) => (
-                                            <div
-                                              key={index}
-                                              onClick={() =>
-                                                handleRadioChange(
-                                                  [exam.id],
-                                                  convertOptionToNumber(
-                                                    optionKey
-                                                  )
-                                                )
-                                              }
+                                          <div>
+                                            <h3
+                                              className={`TextColorDashboard ${
+                                                exam?.name?.length === 1 &&
+                                                "text-center"
+                                              } mb-6 text-2xl font-bold`}
                                             >
-                                              <label className="flex items-center justify-start gap-4 text-left my-4 hover:cursor-pointer">
-                                                <input
-                                                  type="radio"
-                                                  name={`radio-${exam.id}`}
-                                                  className="w-6 h-6 border-2  border-purple-700"
-                                                  id={`radio-${exam.id}-${index} `}
-                                                  onChange={() =>
-                                                    handleRadioChange(
-                                                      [exam.id],
-                                                      convertOptionToNumber(
-                                                        optionKey
-                                                      )
+                                              {
+                                                <span className="text-3xl TextColorDashboard">
+                                                  *
+                                                </span>
+                                              }{" "}
+                                              {exam.name}{" "}
+                                              {
+                                                // Calculate time for each question in milliseconds
+                                                <h2>{remainingTime}</h2>
+                                              }
+                                            </h3>
+
+                                            {[
+                                              "option1",
+                                              "option2",
+                                              "option3",
+                                              "option4",
+                                            ].map((optionKey, index) => (
+                                              <div
+                                                key={index}
+                                                onClick={() =>
+                                                  handleRadioChange(
+                                                    [exam.id],
+                                                    convertOptionToNumber(
+                                                      optionKey
                                                     )
-                                                  }
-                                                  checked={selectedOptions[
-                                                    exam.id
-                                                  ]?.includes(exam[optionKey])}
-                                                />
-                                                <h2 className="text-[20px] font-bold">
-                                                  {exam[optionKey]}
-                                                </h2>
-                                              </label>
-                                              {/* <div
+                                                  )
+                                                }
+                                              >
+                                                <label className="flex items-center justify-start gap-4 text-left my-4 hover:cursor-pointer">
+                                                  <input
+                                                    type="radio"
+                                                    name={`radio-${exam.id}`}
+                                                    className="w-6 h-6 border-2  border-purple-700"
+                                                    id={`radio-${exam.id}-${index} `}
+                                                    onChange={() =>
+                                                      handleRadioChange(
+                                                        [exam.id],
+                                                        convertOptionToNumber(
+                                                          optionKey
+                                                        )
+                                                      )
+                                                    }
+                                                    checked={selectedOptions[
+                                                      exam.id
+                                                    ]?.includes(
+                                                      exam[optionKey]
+                                                    )}
+                                                  />
+                                                  <h2 className="text-[20px] font-bold">
+                                                    {exam[optionKey]}
+                                                  </h2>
+                                                </label>
+                                                {/* <div
                                                 className="flex items-center"
                                                 
                                               >
@@ -388,31 +423,31 @@ const page = () => {
                                                   {exam[optionKey]}
                                                 </h2>
                                               </div> */}
-                                            </div>
-                                          ))}
+                                              </div>
+                                            ))}
+                                          </div>
                                         </div>
                                       </div>
                                     </div>
                                   </div>
-                                </div>
-                              );
-                            })}
-                          <div className="w-[1200px] mx-auto p-4">
-                            <button
-                              onClick={(e) => {
-                                e.preventDefault();
-                                handleSubmitContestExam(eventId);
-                              }}
-                              className={`bg-gradient-to-r from-[#cc009c] to-[#ff0000b7] btn btn-outline ${
-                                uniqueNameCount === 1 && "w-full"
-                              } ${
-                                uniqueNameCount > 1 && "w-[710px]"
-                              } mx-auto text-white`}
-                            >
-                              Submit
-                            </button>
-                          </div>
-                          {/* <div>
+                                );
+                              })}
+                            <div className="w-[1200px] mx-auto p-4">
+                              <button
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  handleSubmitContestExam(eventId);
+                                }}
+                                className={`bg-gradient-to-r from-[#cc009c] to-[#ff0000b7] btn btn-outline ${
+                                  uniqueNameCount === 1 && "w-full"
+                                } ${
+                                  uniqueNameCount > 1 && "w-[710px]"
+                                } mx-auto text-white`}
+                              >
+                                Submit
+                              </button>
+                            </div>
+                            {/* <div>
                               <h3 className="text-2xl TextColorOther">
                                 Selected Options:
                               </h3>
@@ -444,7 +479,8 @@ const page = () => {
                                 )}
                               </ul>
                             </div> */}
-                        </div>
+                          </div>
+                        </>
                       )}
                     </div>
 
@@ -538,7 +574,7 @@ const page = () => {
         <div className="grid grid-cols-3 mx-auto gap-6 p-6">
           {events && events.length > 0
             ? events.map((event) => {
-                const eventDateString = "2023-12-13"; // Replace this with your actual date from the database
+                const eventDateString = "2023-12-14"; // Replace this with your actual date from the database
 
                 const today = moment().format("YYYY-MM-DD");
                 const eventDate = moment(eventDateString).format("YYYY-MM-DD");

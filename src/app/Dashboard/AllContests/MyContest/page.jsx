@@ -39,7 +39,7 @@ const page = () => {
     question.map((event) => setEventID(event.event_id));
   }, [question]);
   const uniqueNameCount = new Set(question.map((e) => e.name)).size;
-
+  let timer;
   const handleRadioChange = (questionIds, options) => {
     setCurrentQuestion(questionIds[0]);
     setSelectedOptions((prevOptions) => {
@@ -51,30 +51,21 @@ const page = () => {
     });
     setUserAnswered(true);
 
+    // Start the timer for the next question
+
     handleNextQuestion();
   };
 
-  // Display remaining time for the current question
-  const formatTime = (time) => {
-    // Calculate minutes by dividing time by 60,000 milliseconds (1 minute)
-    const minutes = Math.floor(time / (60 * 1000));
-
-    // Calculate seconds by taking the remainder when dividing by 60 seconds
-    const seconds = Math.floor((time % (60 * 1000)) / 1000);
-
-    // Return the formatted string with leading zeros
-    return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(
-      2,
-      "0"
-    )}`;
-  };
-
-  let timer;
   useEffect(() => {
     if (remainingTime > 0 && currentQuestion < totalQuestion) {
       timer = setInterval(() => {
         setRemainingTime((prevTime) => prevTime - 1);
       }, 1000);
+    }
+    if (remainingTime < 1 && currentQuestion < totalQuestion) {
+      toast.error("Sorry,Your Time Out!");
+      closeModal();
+      return;
     }
 
     return () => clearInterval(timer); // Remove this line to allow the timer to continue running
@@ -150,11 +141,7 @@ const page = () => {
       setCurrentQuestion(0); // Reset current question index
       setRemainingTime();
       setRemainingTime(res?.data?.success?.data?.event?.duration);
-      // setTimeRemaining(
-      //   setTimeout(() => {
-      //     examDuration / totalQuestion;
-      //   }, 0)
-      // );
+
       setLoading(false);
     });
   };
@@ -370,7 +357,10 @@ const page = () => {
                                               {exam.name}{" "}
                                               {
                                                 // Calculate time for each question in milliseconds
-                                                <h2>{remainingTime}</h2>
+                                                <h2 className="TextColor2">
+                                                  Remaining Time :{" "}
+                                                  {remainingTime} sec
+                                                </h2>
                                               }
                                             </h3>
 

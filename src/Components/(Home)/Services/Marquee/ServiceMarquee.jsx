@@ -13,7 +13,7 @@ const ServiceMarquee = () => {
   const [hoveredDiv3, setHoveredDiv3] = useState(false);
 
   return (
-    <div className="">
+    <div>
       <div className="bgcolor p-12 font-bold h-[400px]">
         <Marquee pauseOnHover={true} speed={100}>
           <div

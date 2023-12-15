@@ -1,4 +1,5 @@
 "use client";
+
 import Marquee from "react-fast-marquee";
 import { TfiAnnouncement } from "react-icons/tfi";
 import { SiTestcafe } from "react-icons/si";
@@ -13,11 +14,11 @@ const ServiceMarquee = () => {
   const [hoveredDiv3, setHoveredDiv3] = useState(false);
 
   return (
-    <div>
-      <div className="bgcolor p-12 font-bold h-[400px]">
+    <div className=" mx-auto overflow-hidden">
+      <div className="bgcolor p-12 font-bold h-[300px]">
         <Marquee pauseOnHover={true} speed={100}>
           <div
-            className={`bg-white p-20 rounded-3xl w-[400px] h-[300px] me-32 custom-card ${
+            className={`bg-white p-8 rounded-3xl w-[300px] h-[200px] me-32 custom-card ${
               hoveredDiv1 ? "hovered" : ""
             }`}
             onMouseEnter={() => setHoveredDiv1(true)}
@@ -36,7 +37,7 @@ const ServiceMarquee = () => {
             </div>
           </div>{" "}
           <div
-            className={`bg-white p-20 rounded-3xl w-[400px] h-[300px] me-32 custom-card ${
+            className={`bg-white p-8 rounded-3xl w-[300px] h-[200px] me-32 custom-card ${
               hoveredDiv2 ? "hovered" : ""
             }`}
             onMouseEnter={() => setHoveredDiv2(true)}
@@ -55,7 +56,7 @@ const ServiceMarquee = () => {
             </div>
           </div>
           <div
-            className={`bg-white p-20 rounded-3xl w-[400px] h-[300px] me-32 custom-card ${
+            className={`bg-white p-8 rounded-3xl w-[300px] h-[200px] me-32 custom-card ${
               hoveredDiv3 ? "hovered" : ""
             }`}
             onMouseEnter={() => setHoveredDiv3(true)}
@@ -73,6 +74,7 @@ const ServiceMarquee = () => {
           </div>
         </Marquee>
       </div>
+      <hr className="border-b-2 border-blue-700" />
     </div>
   );
 };

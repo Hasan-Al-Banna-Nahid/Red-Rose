@@ -1,6 +1,8 @@
 import Banner from "@/Components/(Home)/Banner/Banner";
 import Navbar from "@/Components/(Home)/Navbar/Navbar";
 import ServiceMarquee from "@/Components/(Home)/Services/Marquee/ServiceMarquee";
+import Service from "@/Components/(Home)/Services/Marquee/page";
+
 import SignUp from "@/Components/(Home)/SignUp/SignUp";
 
 export default function Home() {
@@ -8,6 +10,7 @@ export default function Home() {
     <main>
       <Navbar />
       <Banner />
+      {/* <Service /> */}
       <ServiceMarquee />
       <SignUp />
     </main>

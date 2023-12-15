@@ -1,13 +1,17 @@
 "use client";
-import React, { useEffect, useState, Fragment, useRef } from "react";
+import React, {
+  useEffect,
+  useState,
+  Fragment,
+  useRef,
+  useCallback,
+} from "react";
 import DashboardNavbar from "../../DashboardHeader/DashboardNavbar";
 import useAxiosSecure from "@/Components/Hooks/useAxiosSecure";
 import { Transition, Dialog } from "@headlessui/react";
 
 import moment from "moment";
 import toast, { Toaster } from "react-hot-toast";
-import Countdown from "react-countdown";
-import { CountdownCircleTimer } from "react-countdown-circle-timer";
 
 const page = () => {
   const axiosSecure = useAxiosSecure();
@@ -24,7 +28,8 @@ const page = () => {
   let [loading, setLoading] = useState(false);
   // const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const timeForEachQuestion = examDuration / totalQuestion;
-  const [remainingTime, setRemainingTime] = useState(timeForEachQuestion);
+  // const [remainingTime, setRemainingTime] = useState(timeForEachQuestion);
+  const [remainingTime, setRemainingTime] = useState(0);
   const [userAnswered, setUserAnswered] = useState(false);
   const [inputType, setInputType] = useState("");
 
@@ -32,6 +37,11 @@ const page = () => {
   const [currentQuestion, setCurrentQuestion] = useState(
     Number || 0 || Boolean
   );
+  const [timer, setTimer] = useState(null);
+  // Set your initial time value here
+
+  const totalQuestions = question.length; // Assuming you have a 'question' array
+
   const [selectedOptions, setSelectedOptions] = useState({
     ans: [],
   });
@@ -39,50 +49,64 @@ const page = () => {
     question.map((event) => setEventID(event.event_id));
   }, [question]);
   const uniqueNameCount = new Set(question.map((e) => e.name)).size;
-  let timer;
+
+  const startCountDownTimer = useCallback(() => {
+    setTimer(
+      setInterval(() => {
+        setRemainingTime((prevTime) => (prevTime > 0 ? prevTime - 1 : 0));
+      }, 1000)
+    );
+  }, []);
   const handleRadioChange = (questionIds, options) => {
+    clearInterval(timer);
     setCurrentQuestion(questionIds[0]);
     setSelectedOptions((prevOptions) => {
+      // Check if _selectedOptions_exam_id is an array
+      const isArrayOfIds = Array.isArray(prevOptions._selectedOptions_exam_id);
+
+      // If it's an array, include the current question ID
       const updatedOptions = {
         ...prevOptions,
+        _selectedOptions_exam_id: isArrayOfIds
+          ? [...prevOptions._selectedOptions_exam_id, questionIds[0]]
+          : [questionIds[0]],
         ans: [...prevOptions.ans, questionIds[0], options],
       };
+
       return updatedOptions;
     });
     setUserAnswered(true);
-
-    // Start the timer for the next question
-
+    startCountDownTimer();
     handleNextQuestion();
   };
 
   useEffect(() => {
     if (remainingTime > 0 && currentQuestion < totalQuestion) {
-      timer = setInterval(() => {
-        setRemainingTime((prevTime) => prevTime - 1);
-      }, 1000);
-    }
-    if (remainingTime < 1 && currentQuestion < totalQuestion) {
-      toast.error("Sorry,Your Time Out!");
-      closeModal();
-      return;
+      startCountDownTimer();
     }
 
-    return () => clearInterval(timer); // Remove this line to allow the timer to continue running
+    if (remainingTime < 1 && currentQuestion < totalQuestion) {
+      // Handle time out
+      clearInterval(timer);
+      toast.error("Sorry, Your Time Out!");
+      closeModal();
+    }
+
+    return () => clearInterval(timer);
   }, [remainingTime, currentQuestion]);
 
   const handleNextQuestion = () => {
-    // Move to the next question
-    setCurrentQuestion((prevIndex) => prevIndex + 1);
+    clearInterval(timer);
+    setRemainingTime(Math.round(examDuration / totalQuestion)); // Set your initial time value here
 
-    // Check if there are more questions
-    if (currentQuestion < totalQuestion - 1) {
-      // Reset timer and set remaining time for the next question
-      setRemainingTime();
+    if (currentQuestion < totalQuestions - 1) {
+      setCurrentQuestion((prevIndex) => prevIndex + 1);
+      setUserAnswered(false);
+    } else {
+      // Handle the end of the quiz
     }
-
-    setUserAnswered(false);
   };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -405,14 +429,6 @@ const page = () => {
                                                     {exam[optionKey]}
                                                   </h2>
                                                 </label>
-                                                {/* <div
-                                                className="flex items-center"
-                                                
-                                              >
-                                                <h2 className="text-[20px] font-bold">
-                                                  {exam[optionKey]}
-                                                </h2>
-                                              </div> */}
                                               </div>
                                             ))}
                                           </div>
@@ -564,7 +580,7 @@ const page = () => {
         <div className="grid grid-cols-3 mx-auto gap-6 p-6">
           {events && events.length > 0
             ? events.map((event) => {
-                const eventDateString = "2023-12-14"; // Replace this with your actual date from the database
+                const eventDateString = "2023-12-15"; // Replace this with your actual date from the database
 
                 const today = moment().format("YYYY-MM-DD");
                 const eventDate = moment(eventDateString).format("YYYY-MM-DD");

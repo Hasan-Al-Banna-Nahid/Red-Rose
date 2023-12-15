@@ -28,7 +28,6 @@ const page = () => {
   let [loading, setLoading] = useState(false);
   // const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const timeForEachQuestion = examDuration / totalQuestion;
-  // const [remainingTime, setRemainingTime] = useState(timeForEachQuestion);
   const [remainingTime, setRemainingTime] = useState(Number);
   const [userAnswered, setUserAnswered] = useState(false);
   const [inputType, setInputType] = useState("");
@@ -41,6 +40,7 @@ const page = () => {
   // Set your initial time value here
 
   const totalQuestions = question.length; // Assuming you have a 'question' array
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
   const [selectedOptions, setSelectedOptions] = useState({
     ans: [],
@@ -80,6 +80,7 @@ const page = () => {
   };
 
   useEffect(() => {
+    clearInterval(timer);
     if (remainingTime > 0 && currentQuestion < totalQuestion) {
       startCountDownTimer();
     }

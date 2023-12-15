@@ -29,7 +29,7 @@ const page = () => {
   // const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const timeForEachQuestion = examDuration / totalQuestion;
   // const [remainingTime, setRemainingTime] = useState(timeForEachQuestion);
-  const [remainingTime, setRemainingTime] = useState(0);
+  const [remainingTime, setRemainingTime] = useState(Number);
   const [userAnswered, setUserAnswered] = useState(false);
   const [inputType, setInputType] = useState("");
 
@@ -53,14 +53,14 @@ const page = () => {
   const startCountDownTimer = useCallback(() => {
     setTimer(
       setInterval(() => {
-        setRemainingTime((prevTime) => (prevTime > 0 ? prevTime - 1 : 0));
+        setRemainingTime((prevTime) => Math.floor(prevTime - 1));
       }, 1000)
     );
   }, []);
   const handleRadioChange = (questionIds, options) => {
-    clearInterval(timer);
     setCurrentQuestion(questionIds[0]);
     setSelectedOptions((prevOptions) => {
+      clearInterval(timer);
       // Check if _selectedOptions_exam_id is an array
       const isArrayOfIds = Array.isArray(prevOptions._selectedOptions_exam_id);
 
@@ -72,12 +72,11 @@ const page = () => {
           : [questionIds[0]],
         ans: [...prevOptions.ans, questionIds[0], options],
       };
-
       return updatedOptions;
     });
     setUserAnswered(true);
-    startCountDownTimer();
     handleNextQuestion();
+    // startCountDownTimer();
   };
 
   useEffect(() => {
@@ -86,24 +85,25 @@ const page = () => {
     }
 
     if (remainingTime < 1 && currentQuestion < totalQuestion) {
-      // Handle time out
       clearInterval(timer);
       toast.error("Sorry, Your Time Out!");
       closeModal();
     }
 
     return () => clearInterval(timer);
-  }, [remainingTime, currentQuestion]);
+  }, [remainingTime, currentQuestion, startCountDownTimer]);
 
   const handleNextQuestion = () => {
     clearInterval(timer);
-    setRemainingTime(Math.round(examDuration / totalQuestion)); // Set your initial time value here
+    // setRemainingTime(examDuration / totalQuestion);
+    setRemainingTime(60);
 
     if (currentQuestion < totalQuestions - 1) {
       setCurrentQuestion((prevIndex) => prevIndex + 1);
       setUserAnswered(false);
     } else {
       // Handle the end of the quiz
+      clearInterval(timer);
     }
   };
 

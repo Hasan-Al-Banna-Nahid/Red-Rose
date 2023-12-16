@@ -26,25 +26,20 @@ const page = () => {
   const [results, setResults] = useState([]);
   let [isOpen, setIsOpen] = useState(false);
   let [loading, setLoading] = useState(false);
-  // const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const timeForEachQuestion = examDuration / totalQuestion;
   const [remainingTime, setRemainingTime] = useState(Number);
   const [userAnswered, setUserAnswered] = useState(false);
   const [inputType, setInputType] = useState("");
-
-  const [timeRemaining, setTimeRemaining] = useState();
   const [currentQuestion, setCurrentQuestion] = useState(
     Number || 0 || Boolean
   );
   const [timer, setTimer] = useState(null);
-  // Set your initial time value here
-
-  const totalQuestions = question.length; // Assuming you have a 'question' array
+  const totalQuestions = question.length;
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-
   const [selectedOptions, setSelectedOptions] = useState({
     ans: [],
   });
+
   useEffect(() => {
     question.map((event) => setEventID(event.event_id));
   }, [question]);
@@ -60,10 +55,9 @@ const page = () => {
   const handleRadioChange = (questionIds, options) => {
     setCurrentQuestion(questionIds[0]);
     setSelectedOptions((prevOptions) => {
-      clearInterval(timer);
       // Check if _selectedOptions_exam_id is an array
       const isArrayOfIds = Array.isArray(prevOptions._selectedOptions_exam_id);
-
+      clearInterval(timer);
       // If it's an array, include the current question ID
       const updatedOptions = {
         ...prevOptions,
@@ -72,17 +66,17 @@ const page = () => {
           : [questionIds[0]],
         ans: [...prevOptions.ans, questionIds[0], options],
       };
+
       return updatedOptions;
     });
     setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
-    // setUserAnswered(true);
+    setUserAnswered(true);
     handleNextQuestion();
-    // startCountDownTimer();
   };
 
   useEffect(() => {
     clearInterval(timer);
-    if (remainingTime > 0 && currentQuestion < totalQuestion) {
+    if (remainingTime > 0 && currentQuestion <= totalQuestion) {
       startCountDownTimer();
     }
 
@@ -97,9 +91,8 @@ const page = () => {
 
   const handleNextQuestion = () => {
     clearInterval(timer);
-    // setRemainingTime(examDuration / totalQuestion);
-    setRemainingTime(60);
-
+    // setRemainingTime(60);
+    setRemainingTime(Math.floor(examDuration / totalQuestion) * totalQuestion);
     if (currentQuestion < totalQuestions - 1) {
       setCurrentQuestion((prevIndex) => prevIndex + 1);
       setUserAnswered(false);
@@ -129,6 +122,9 @@ const page = () => {
 
   function closeModal() {
     setIsOpen(false);
+    if (inputType === "takeExam") {
+      window.location.reload();
+    }
   }
 
   function openModal(type) {
@@ -303,6 +299,12 @@ const page = () => {
                             {`Exam Duration : ${examDuration}`}
                           </h2>
                         </div>
+                        <div>
+                          <h2 className="TextColorOther text-3xl mt-4 text-center font-bold">
+                            Select a Answer Before Time Reach Out,Only One
+                            Chance To Select Answer
+                          </h2>
+                        </div>
                       </div>
                     ) : (
                       ""
@@ -313,7 +315,7 @@ const page = () => {
                       </h2>
                     )}
                   </Dialog.Title>
-                  <div className="mt-2 p-8 rounded-lg">
+                  <div className="mt-2 p-8 rounded-lg mx-auto w-full bg-white">
                     <div>
                       {syllabus && inputType === "syllabus" && (
                         <p
@@ -355,7 +357,7 @@ const page = () => {
                     </div>
 
                     <div className="grid grid-cols-2 gap-4 p-4 rounded-lg mx-auto w-full bg-white">
-                      {exam && inputType === "takeExam" && (
+                      {question && exam && inputType === "takeExam" && (
                         <>
                           <div>
                             {question && question[currentQuestionIndex] && (
@@ -432,19 +434,32 @@ const page = () => {
                             )}
 
                             <div className="w-[1200px] mx-auto p-4">
-                              <button
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  handleSubmitContestExam(eventId);
-                                }}
-                                className={`bg-gradient-to-r from-[#cc009c] to-[#ff0000b7] btn btn-outline ${
-                                  uniqueNameCount === 1 && "w-full"
-                                } ${
-                                  uniqueNameCount > 1 && "w-[710px]"
-                                } mx-auto text-white`}
-                              >
-                                Submit
-                              </button>
+                              {currentQuestionIndex < totalQuestions ? (
+                                <button
+                                  onClick={handleNextQuestion}
+                                  className={`bg-gradient-to-r from-[#cc009c] to-[#ff0000b7] text-white btn btn-outline text-2xl ${
+                                    uniqueNameCount === 1 && "w-full"
+                                  } ${
+                                    uniqueNameCount > 1 && "w-[710px]"
+                                  } mx-auto text-white`}
+                                >
+                                  <span className="loading loading-infinity loading-lg  text-center font-bold"></span>
+                                </button>
+                              ) : (
+                                <button
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    handleSubmitContestExam(eventId);
+                                  }}
+                                  className={`bg-gradient-to-r from-[#cc009c] to-[#ff0000b7] btn btn-outline ${
+                                    uniqueNameCount === 1 && "w-full"
+                                  } ${
+                                    uniqueNameCount > 1 && "w-[710px]"
+                                  } mx-auto text-white`}
+                                >
+                                  Submit
+                                </button>
+                              )}
                             </div>
                           </div>
                         </>
@@ -452,11 +467,9 @@ const page = () => {
                     </div>
 
                     <div className="  p-4 rounded-lg mx-auto w-full bg-white">
-                      {/* <h2 className="text-center text-2xl TextColorDashboard">
-                        Your Result
-                      </h2> */}
                       {results &&
                         inputType === "results" &&
+                        results &&
                         results.map((result, index) => {
                           return (
                             <div className="overflow-x-auto">

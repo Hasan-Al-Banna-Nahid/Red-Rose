@@ -1,24 +1,24 @@
 "use client";
 import React, { useEffect, useState, Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import useAxiosSecure from "@/Components/Hooks/useAxiosSecure";
 import DashboardNavbar from "../DashboardHeader/DashboardNavbar";
+import useAxiosSecure from "@/Components/Hooks/useAxiosSecure";
 import toast, { Toaster } from "react-hot-toast";
 
 const page = () => {
-  let [isOpen, setIsOpen] = useState(false);
-  const [inputType, setInputType] = useState("");
   const [events, setEvents] = useState([]);
   const [syllabus, setSyllabus] = useState([]);
   const [participants, setParticipants] = useState([]);
-  const [alreadyEnrolled, setAlreadyEnrolled] = useState(null || {} || []);
   const axiosSecure = useAxiosSecure();
+  let [isOpen, setIsOpen] = useState(false);
+  const [inputType, setInputType] = useState("");
+  const [enrolledContest, setEnrolledContest] = useState(null);
+  const [alreadyEnrolled, setAlreadyEnrolled] = useState(null || {} || []);
+
   useEffect(() => {
     const fetchData = async () => {
-      let url = "/modeltest/all";
-      let url1 = "/event/all";
       try {
-        const res = await axiosSecure.get(url1);
+        const res = await axiosSecure.get("/event/all");
         let Token = res?.data?.success?.token;
         localStorage.setItem("access-token", Token);
         setEvents(res?.data?.success?.data?.events);
@@ -43,6 +43,45 @@ const page = () => {
       localStorage?.setItem("access-token", Token);
       setSyllabus(res?.data?.success?.data?.syllabs?.description);
     });
+  };
+  const handleParticipant = (id) => {
+    axiosSecure.get(`/event/participant/${id}`).then((res) => {
+      let Token = res?.data?.success?.token;
+      localStorage?.setItem("access-token", Token);
+
+      setParticipants(res?.data?.success?.data?.enrolls?.users);
+    });
+  };
+  const handleEnroll = (user) => {
+    console.log(user.id);
+    axiosSecure
+      .post(`/event/enroll`, {
+        event_id: user.id,
+      })
+      .then((res) => {
+        try {
+          let Token = res?.data?.success?.token || res?.data?.error?.token;
+          const alreadyEnrolled = res?.data?.error?.code;
+          setAlreadyEnrolled(alreadyEnrolled);
+          localStorage?.setItem("access-token", Token);
+          toast.error(res?.data?.error?.message);
+
+          console.log(res?.data?.success?.data?.events);
+          setEnrolledContest(res?.data?.success?.data?.events);
+          if (res?.data?.success) {
+            toast.success("Enrolled successfully");
+          }
+        } catch (error) {
+          toast.error(error);
+          console.log(error);
+        }
+      })
+
+      .catch((err) => {
+        console.error(err);
+        toast.error(err);
+        return;
+      });
   };
   return (
     <div className="w-[2000px] bg-base-300">

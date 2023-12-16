@@ -10,10 +10,10 @@ import "./style.css";
 const SignUp = () => {
   return (
     <div>
-      <div className="signUpBG mt-[200px] relative  my-12">
+      <div className="signUpBG mt-24 relative">
         <div className=" w-[1200px] flex justify-center    h-[450px]  p-6">
           <div>
-            <h2 className="text-purple-800 font-bold text-3xl text-center absolute left-[270px] border-b-2 border-white">
+            <h2 className="text-slate-800 font-bold text-3xl text-center absolute left-[270px] border-b-2 border-white">
               Contact Us
             </h2>
             <div className="font-bold text-2xl text-white mt-12 p-8 ml-8">
@@ -31,20 +31,20 @@ const SignUp = () => {
 
           {/* ------------------ */}
           <div className="mx-8">
-            <h2 className="text-purple-800 font-bold text-3xl text-center absolute left-[690px] border-b-2 border-white">
+            <h2 className="text-slate-800 font-bold text-3xl text-center absolute left-[690px] border-b-2 border-white">
               Social Links
             </h2>
             <div className="font-bold text-2xl text-white mt-12 ml-16 p-8 ">
               <div className="flex  gap-12">
                 <div>
                   <Link href={"https://www.facebook.com/ollyo"} target="_blank">
-                    <FaSquareFacebook className="text-5xl rounded-lg text-[#1877F2] my-4" />
+                    <FaSquareFacebook className="text-5xl rounded-lg text-white my-4" />
                     <span className=" text-xl font-bold"> Page</span>
                   </Link>
                 </div>
                 <div>
                   <Link href={"https://www.facebook.com/ollyo"} target="_blank">
-                    <RiFacebookCircleFill className="text-5xl rounded-lg text-[#1877F2] my-4" />
+                    <RiFacebookCircleFill className="text-5xl rounded-lg text-white my-4" />
                     <span className=" text-xl font-bold"> Group</span>
                   </Link>
                 </div>
@@ -53,7 +53,7 @@ const SignUp = () => {
                     href={"https://www.youtube.com/@ProgrammingHeroCommunity"}
                     target="_blank"
                   >
-                    <BsYoutube className="text-5xl rounded-lg text-[#c4302b] my-4" />
+                    <BsYoutube className="text-5xl rounded-lg text-white my-4" />
                     <span className=" text-xl font-bold">Chanel</span>
                   </Link>
                 </div>

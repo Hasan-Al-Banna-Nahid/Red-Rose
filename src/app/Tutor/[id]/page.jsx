@@ -3,12 +3,12 @@ import Navbar from "@/Components/(Home)/Navbar/Navbar";
 import LoadSingleTutorData from "@/app/Utils/LoadSingleTutorData";
 import Image from "next/image";
 import React, { useState } from "react";
-import image from "../../../../public/asset/banner.webp";
+import image from "../../../../public/asset/2 (3).png";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import SingleTutor from "../SingleTutor";
 import AboutTeacher from "../AboutTeacher";
 import Marquee from "react-fast-marquee";
-import SuggestedTeacher from "../../../../public/asset/banner.webp";
+import SuggestedTeacher from "../../../../public/asset/2 (3).png";
 import "./style.css";
 
 const page = async ({ params }) => {

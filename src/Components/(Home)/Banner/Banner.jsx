@@ -4,8 +4,7 @@ import Image from "next/image";
 import banner from "../../../../public/asset/2 (3).png";
 import "./Banner.css";
 import { TypeAnimation } from "react-type-animation";
-import { Parallax } from "react-scroll-parallax";
-import LazyLoad from "react-lazy-load";
+
 const Banner = () => {
   return (
     <>
@@ -88,15 +87,13 @@ const Banner = () => {
           </div>
         </div>
         <div className=" mx-auto ">
-          <LazyLoad offset={300}>
-            <Image
-              src={banner}
-              width={1560}
-              height={1400}
-              alt="banner"
-              className="rounded-lg mt-4"
-            />
-          </LazyLoad>
+          <Image
+            src={banner}
+            width={1560}
+            height={1400}
+            alt="banner"
+            className="rounded-lg mt-4"
+          />
         </div>
       </div>
     </>

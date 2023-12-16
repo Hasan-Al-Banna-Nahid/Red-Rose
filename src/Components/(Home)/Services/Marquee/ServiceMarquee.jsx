@@ -74,7 +74,7 @@ const ServiceMarquee = () => {
           </div>
         </Marquee>
       </div>
-      <hr className="border-b-2 border-blue-700" />
+      <hr className="border-b-2 border-red-700" />
     </div>
   );
 };

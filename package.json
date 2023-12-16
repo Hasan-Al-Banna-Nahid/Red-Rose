@@ -11,7 +11,6 @@
   "dependencies": {
     "@headlessui/react": "^1.7.17",
     "axios": "^1.6.2",
-    "convert-string-to-number": "^1.0.3",
     "crypto-js": "^4.2.0",
     "firebase": "^10.6.0",
     "localforage": "^1.10.0",
@@ -19,27 +18,19 @@
     "moment": "^2.29.4",
     "next": "^14.0.4",
     "react": "^18",
-    "react-countdown": "^2.3.5",
-    "react-countdown-circle-timer": "^3.2.1",
     "react-dom": "^18",
     "react-fast-marquee": "^1.6.2",
-    "react-helmet-async": "^2.0.1",
     "react-hook-form": "^7.48.2",
     "react-hot-toast": "^2.4.1",
     "react-icons": "^4.12.0",
     "react-intersection-observer": "^9.5.3",
-    "react-lazy-load": "^4.0.1",
-    "react-router-dom": "^6.20.0",
-    "react-scroll-parallax": "^3.4.5",
     "react-tabs": "^6.0.2",
     "react-type-animation": "^3.2.0",
-    "react-vertical-timeline-component": "^3.6.0",
     "sort-by": "^1.2.0",
     "styled-components": "^4.0.0",
     "sweetalert2": "^11.10.0",
     "sweetalert2-react-content": "^5.0.7",
-    "to-integer": "^1.0.1",
-    "to-num": "^1.0.1"
+    "update": "^0.7.4"
   },
   "devDependencies": {
     "autoprefixer": "^10.0.1",
@@ -47,6 +38,8 @@
     "eslint": "^8",
     "eslint-config-next": "14.0.2",
     "postcss": "^8",
-    "tailwindcss": "^3.3.0"
+    "tailwindcss": "^3.3.0",
+    "webpack": "^5.0.0-rc.6",
+    "webpack-cli": "^5.1.4"
   }
 }

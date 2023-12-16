@@ -74,7 +74,8 @@ const page = () => {
       };
       return updatedOptions;
     });
-    setUserAnswered(true);
+    setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
+    // setUserAnswered(true);
     handleNextQuestion();
     // startCountDownTimer();
   };
@@ -163,14 +164,14 @@ const page = () => {
       setQuestion(res?.data?.success?.data?.question);
       setTotalQuestion(res?.data?.success?.data?.totalquestion);
       setExamDuration(res?.data?.success?.data?.event?.duration);
-      setCurrentQuestion(0); // Reset current question index
+      setCurrentQuestion(0);
       setRemainingTime();
       setRemainingTime(res?.data?.success?.data?.event?.duration);
 
       setLoading(false);
     });
   };
-
+  console.log(currentQuestion);
   const handleResult = (event) => {
     axiosSecure.get(`/event/get-result/${event.id}`).then((res) => {
       let Token = res?.data?.success?.token;
@@ -357,88 +358,79 @@ const page = () => {
                       {exam && inputType === "takeExam" && (
                         <>
                           <div>
-                            {question &&
-                              question.map((exam) => {
-                                return (
-                                  <div>
-                                    <div
-                                      className={`p-4  w-[1200px] `}
-                                      key={exam.id}
-                                    >
-                                      <div>
-                                        <div>
-                                          <div>
-                                            <h3
-                                              className={`TextColorDashboard ${
-                                                exam?.name?.length === 1 &&
-                                                "text-center"
-                                              } mb-6 text-2xl font-bold`}
-                                            >
-                                              {
-                                                <span className="text-3xl TextColorDashboard">
-                                                  *
-                                                </span>
-                                              }{" "}
-                                              {exam.name}{" "}
-                                              {
-                                                // Calculate time for each question in milliseconds
-                                                <h2 className="TextColor2">
-                                                  Remaining Time :{" "}
-                                                  {remainingTime} sec
-                                                </h2>
-                                              }
-                                            </h3>
+                            {question && question[currentQuestionIndex] && (
+                              <div>
+                                <div
+                                  className={`p-4 w-[1200px]`}
+                                  key={question[currentQuestionIndex].id}
+                                >
+                                  <h3
+                                    className={`TextColorDashboard ${
+                                      question[currentQuestionIndex]?.name
+                                        ?.length === 1 && "text-center"
+                                    } mb-6 text-2xl font-bold`}
+                                  >
+                                    <span className="text-3xl TextColorDashboard">
+                                      *
+                                    </span>{" "}
+                                    {question[currentQuestionIndex].name}
+                                    <h2 className="TextColor2">
+                                      Remaining Time : {remainingTime} sec
+                                    </h2>
+                                  </h3>
 
-                                            {[
-                                              "option1",
-                                              "option2",
-                                              "option3",
-                                              "option4",
-                                            ].map((optionKey, index) => (
-                                              <div
-                                                key={index}
-                                                onClick={() =>
-                                                  handleRadioChange(
-                                                    [exam.id],
-                                                    convertOptionToNumber(
-                                                      optionKey
-                                                    )
-                                                  )
-                                                }
-                                              >
-                                                <label className="flex items-center justify-start gap-4 text-left my-4 hover:cursor-pointer">
-                                                  <input
-                                                    type="radio"
-                                                    name={`radio-${exam.id}`}
-                                                    className="w-6 h-6 border-2  border-purple-700"
-                                                    id={`radio-${exam.id}-${index} `}
-                                                    onChange={() =>
-                                                      handleRadioChange(
-                                                        [exam.id],
-                                                        convertOptionToNumber(
-                                                          optionKey
-                                                        )
-                                                      )
-                                                    }
-                                                    checked={selectedOptions[
-                                                      exam.id
-                                                    ]?.includes(
-                                                      exam[optionKey]
-                                                    )}
-                                                  />
-                                                  <h2 className="text-[20px] font-bold">
-                                                    {exam[optionKey]}
-                                                  </h2>
-                                                </label>
-                                              </div>
-                                            ))}
-                                          </div>
-                                        </div>
-                                      </div>
+                                  {[
+                                    "option1",
+                                    "option2",
+                                    "option3",
+                                    "option4",
+                                  ].map((optionKey, index) => (
+                                    <div
+                                      key={index}
+                                      onClick={() =>
+                                        handleRadioChange(
+                                          [question[currentQuestionIndex].id],
+                                          convertOptionToNumber(optionKey)
+                                        )
+                                      }
+                                    >
+                                      <label className="flex items-center justify-start gap-4 text-left my-4 hover:cursor-pointer">
+                                        <input
+                                          type="radio"
+                                          name={`radio-${question[currentQuestionIndex].id}`}
+                                          className="w-6 h-6 border-2  border-purple-700"
+                                          id={`radio-${question[currentQuestionIndex].id}-${index} `}
+                                          onChange={() =>
+                                            handleRadioChange(
+                                              [
+                                                question[currentQuestionIndex]
+                                                  .id,
+                                              ],
+                                              convertOptionToNumber(optionKey)
+                                            )
+                                          }
+                                          checked={selectedOptions[
+                                            question[currentQuestionIndex].id
+                                          ]?.includes(
+                                            question[currentQuestionIndex][
+                                              optionKey
+                                            ]
+                                          )}
+                                        />
+                                        <h2 className="text-[20px] font-bold">
+                                          {
+                                            question[currentQuestionIndex][
+                                              optionKey
+                                            ]
+                                          }
+                                        </h2>
+                                      </label>
                                     </div>
-                                  </div>
-                                );
-                              })}
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+
                             <div className="w-[1200px] mx-auto p-4">
                               <button
                                 onClick={(e) => {
@@ -454,38 +446,6 @@ const page = () => {
                                 Submit
                               </button>
                             </div>
-                            {/* <div>
-                              <h3 className="text-2xl TextColorOther">
-                                Selected Options:
-                              </h3>
-                              <ul>
-                                {Object.keys(selectedOptions).map(
-                                  (questionId, index) => (
-                                    <li key={index}>
-                                      <span className="TextColorDashboard text-[22px] my-6 font-bold">
-                                        Question {questionId}:
-                                      </span>{" "}
-                                      <span className="TextColorDashboard ms-2 text-2xl font-bold">
-                                        {
-                                          question.find(
-                                            (q) =>
-                                              q.id.toString() === questionId
-                                          )?.name
-                                        }
-                                      </span>
-                                      ,{" "}
-                                      <span className="TextColorDashboard text-[22px] my-6 font-bold">
-                                        Your Answer {" : "}
-                                      </span>
-                                      :{" "}
-                                      <span className="TextColorOther ms-2 text-2xl font-bold">
-                                        {selectedOptions[questionId]}
-                                      </span>
-                                    </li>
-                                  )
-                                )}
-                              </ul>
-                            </div> */}
                           </div>
                         </>
                       )}
@@ -581,7 +541,7 @@ const page = () => {
         <div className="grid grid-cols-3 mx-auto gap-6 p-6">
           {events && events.length > 0
             ? events.map((event) => {
-                const eventDateString = "2023-12-15"; // Replace this with your actual date from the database
+                const eventDateString = "2023-12-17"; // Replace this with your actual date from the database
 
                 const today = moment().format("YYYY-MM-DD");
                 const eventDate = moment(eventDateString).format("YYYY-MM-DD");

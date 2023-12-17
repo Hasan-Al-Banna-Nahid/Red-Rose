@@ -55,6 +55,15 @@ const page = () => {
     },
     { option1: 0, option2: 0, option3: 0, option4: 0 }
   );
+  const isAnyOptionGreaterThan100 = Object.values(optionCharacterLengths).some(
+    (length) => length > 100
+  );
+
+  if (isAnyOptionGreaterThan100) {
+    console.log("At least one option character length is greater than 100");
+  } else {
+    console.log("All option character lengths are 100 or less");
+  }
 
   const startCountDownTimer = useCallback(() => {
     setTimer(
@@ -77,7 +86,7 @@ const page = () => {
           : [questionIds[0]],
         ans: [...prevOptions.ans, questionIds[0], options],
       };
-
+      startCountDownTimer();
       return updatedOptions;
     });
     setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
@@ -263,13 +272,13 @@ const page = () => {
                   className={` min-h-full 
                   ${
                     inputType === "takeExam" &&
-                    uniqueNameCount > 1 &&
+                    !isAnyOptionGreaterThan100 &&
                     "w-[900px]"
                   }
                   ${
                     inputType === "takeExam" &&
-                    uniqueNameCount === 1 &&
-                    "w-[1400px]"
+                    isAnyOptionGreaterThan100 &&
+                    "w-[1450px]"
                   }
                   ${inputType === "participants" && "w-[1200px]"}
                   ${inputType === "syllabus" && "w-[800px]"}
@@ -449,9 +458,9 @@ const page = () => {
                                 <button
                                   onClick={handleNextQuestion}
                                   className={`bg-gradient-to-r from-[#cc009c] to-[#ff0000b7] text-white btn btn-outline text-2xl ${
-                                    uniqueNameCount === 1 && "w-full"
+                                    isAnyOptionGreaterThan100 && "w-full"
                                   } ${
-                                    uniqueNameCount > 1 && "w-[710px]"
+                                    !isAnyOptionGreaterThan100 && "w-[710px]"
                                   } mx-auto text-white`}
                                 >
                                   <span className="loading loading-infinity loading-lg  text-center font-bold"></span>
@@ -567,8 +576,8 @@ const page = () => {
         <div className="grid grid-cols-3 mx-auto gap-6 p-6">
           {events && events.length > 0
             ? events.map((event) => {
-                const eventDateString = "2023-12-17";
-                // const eventDateString = new Date(event.date).toString();
+                // const eventDateString = "2023-12-17";
+                const eventDateString = new Date(event.date).toString();
 
                 const today = moment().format("YYYY-MM-DD");
                 const eventDate = moment(eventDateString).format("YYYY-MM-DD");

@@ -12,6 +12,7 @@ import { Transition, Dialog } from "@headlessui/react";
 
 import moment from "moment";
 import toast, { Toaster } from "react-hot-toast";
+import Marquee from "react-fast-marquee";
 
 const page = () => {
   const axiosSecure = useAxiosSecure();
@@ -44,6 +45,16 @@ const page = () => {
     question.map((event) => setEventID(event.event_id));
   }, [question]);
   const uniqueNameCount = new Set(question.map((e) => e.name)).size;
+  const optionCharacterLengths = question.reduce(
+    (acc, e) => {
+      acc.option1 += e.option1.length;
+      acc.option2 += e.option2.length;
+      acc.option3 += e.option3.length;
+      acc.option4 += e.option4.length;
+      return acc;
+    },
+    { option1: 0, option2: 0, option3: 0, option4: 0 }
+  );
 
   const startCountDownTimer = useCallback(() => {
     setTimer(
@@ -167,7 +178,7 @@ const page = () => {
       setLoading(false);
     });
   };
-  console.log(currentQuestion);
+  console.log(events.map((e) => typeof e.date));
   const handleResult = (event) => {
     axiosSecure.get(`/event/get-result/${event.id}`).then((res) => {
       let Token = res?.data?.success?.token;
@@ -556,7 +567,8 @@ const page = () => {
         <div className="grid grid-cols-3 mx-auto gap-6 p-6">
           {events && events.length > 0
             ? events.map((event) => {
-                const eventDateString = "2023-12-17"; // Replace this with your actual date from the database
+                const eventDateString = "2023-12-17";
+                // const eventDateString = new Date(event.date).toString();
 
                 const today = moment().format("YYYY-MM-DD");
                 const eventDate = moment(eventDateString).format("YYYY-MM-DD");
@@ -567,6 +579,19 @@ const page = () => {
 
                 return (
                   <div className="card bg-white rounded-lg p-4">
+                    {showTakeExamButton ? (
+                      <Marquee>
+                        <h2 className=" TextColorOther font-bold text-center text-xl">
+                          Participate In The Exam
+                        </h2>
+                      </Marquee>
+                    ) : (
+                      <Marquee>
+                        <h2 className=" TextColorOther font-bold text-center text-xl">
+                          Wait For The Exam Date,It's Coming
+                        </h2>
+                      </Marquee>
+                    )}
                     <div className="flex gap-8 justify-center items-center overflow-hidden">
                       <div className="card-body">
                         <h2 className="text-2xl font-bold text-blue-600 TextColorDashboard">

@@ -468,70 +468,72 @@ const page = () => {
 
                     <div className="  p-4 rounded-lg mx-auto w-full bg-white">
                       {results &&
-                        inputType === "results" &&
-                        results &&
-                        results.map((result, index) => {
-                          return (
-                            <div className="overflow-x-auto">
-                              <table className="table p-6">
-                                {/* head */}
-                                <thead className="p-6">
-                                  <tr>
-                                    <th className="TextColorDashboard font-bold text-[22px]">
-                                      Total Questions
-                                    </th>
-                                    <th className="TextColorDashboard font-bold text-[22px]">
-                                      Given Answer
-                                    </th>
-                                    <th className="TextColorDashboard font-bold text-[22px]">
-                                      Not Given Answer
-                                    </th>
+                      inputType === "results" &&
+                      results &&
+                      results.length > 0
+                        ? results.map((result, index) => {
+                            return (
+                              <div className="overflow-x-auto">
+                                <table className="table p-6">
+                                  {/* head */}
+                                  <thead className="p-6">
+                                    <tr>
+                                      <th className="TextColorDashboard font-bold text-[22px]">
+                                        Total Questions
+                                      </th>
+                                      <th className="TextColorDashboard font-bold text-[22px]">
+                                        Given Answer
+                                      </th>
+                                      <th className="TextColorDashboard font-bold text-[22px]">
+                                        Not Given Answer
+                                      </th>
 
-                                    <th className="TextColorDashboard font-bold text-[22px]">
-                                      Right Answer
-                                    </th>
-                                    <th className="TextColorDashboard font-bold text-[22px]">
-                                      Wrong Answer
-                                    </th>
-                                    <th className="TextColorDashboard font-bold text-[22px]">
-                                      Negative Marks
-                                    </th>
-                                    <th className="TextColorDashboard font-bold text-[22px]">
-                                      Final Marks
-                                    </th>
-                                  </tr>
-                                </thead>
-                                <tbody className="p-6">
-                                  {/* row 1 */}
-                                  <tr>
-                                    <td className="font-bold text-[18px] text-center">
-                                      {result.total_q}
-                                    </td>
-                                    <td className="font-bold text-[18px] text-center">
-                                      {result.give_ans}
-                                    </td>
-                                    <td className="font-bold text-[18px] text-center">
-                                      {result.not_give_ans}
-                                    </td>
+                                      <th className="TextColorDashboard font-bold text-[22px]">
+                                        Right Answer
+                                      </th>
+                                      <th className="TextColorDashboard font-bold text-[22px]">
+                                        Wrong Answer
+                                      </th>
+                                      <th className="TextColorDashboard font-bold text-[22px]">
+                                        Negative Marks
+                                      </th>
+                                      <th className="TextColorDashboard font-bold text-[22px]">
+                                        Final Marks
+                                      </th>
+                                    </tr>
+                                  </thead>
+                                  <tbody className="p-6">
+                                    {/* row 1 */}
+                                    <tr>
+                                      <td className="font-bold text-[18px] text-center">
+                                        {result.total_q}
+                                      </td>
+                                      <td className="font-bold text-[18px] text-center">
+                                        {result.give_ans}
+                                      </td>
+                                      <td className="font-bold text-[18px] text-center">
+                                        {result.not_give_ans}
+                                      </td>
 
-                                    <td className="font-bold text-[18px] text-center">
-                                      {result.r_ans}
-                                    </td>
-                                    <td className="font-bold text-[18px] text-center">
-                                      {result.w_ans}
-                                    </td>
-                                    <td className="font-bold text-[18px] text-center">
-                                      {result.neg_mark}
-                                    </td>
-                                    <td className="font-bold text-[20px] badge badge-outline badge-success p-6 text-center">
-                                      {result.total_mark}
-                                    </td>
-                                  </tr>
-                                </tbody>
-                              </table>
-                            </div>
-                          );
-                        })}
+                                      <td className="font-bold text-[18px] text-center">
+                                        {result.r_ans}
+                                      </td>
+                                      <td className="font-bold text-[18px] text-center">
+                                        {result.w_ans}
+                                      </td>
+                                      <td className="font-bold text-[18px] text-center">
+                                        {result.neg_mark}
+                                      </td>
+                                      <td className="font-bold text-[20px] badge badge-outline badge-success p-6 text-center">
+                                        {result.total_mark}
+                                      </td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                              </div>
+                            );
+                          })
+                        : ""}
                     </div>
                   </div>
 

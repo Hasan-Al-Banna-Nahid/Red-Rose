@@ -5,7 +5,7 @@ import "./style.css";
 import useAxiosSecure from "@/Components/Hooks/useAxiosSecure";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import avatar from "../../../../public/asset/avatar.png";
+import avatar from "../../../../public/asset/avatar-PhotoRoom.png-PhotoRoom.png";
 import toast, { Toaster } from "react-hot-toast";
 
 const Navbar = () => {

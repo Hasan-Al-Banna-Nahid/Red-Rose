@@ -161,10 +161,7 @@ const Service = () => {
               <Image alt="subject" src={ssc} width={800} height={800} />
             </div>
             <div>
-              <h2 className="text-[24px] font-bold text-slate-950">
-                {" "}
-                Scholarship
-              </h2>
+              <h2 className="text-[24px] font-bold TextColor"> Scholarship</h2>
               <button className="btn btn-ghost btn-outline mt-4 w-[200px]">
                 View Details
               </button>
@@ -176,7 +173,7 @@ const Service = () => {
               <Image alt="subject" src={stipend} width={800} height={800} />
             </div>
             <div>
-              <h2 className="text-[24px] font-bold text-slate-950">Stipend</h2>
+              <h2 className="text-[24px] font-bold TextColor">Stipend</h2>
               <button className="btn btn-ghost btn-outline mt-4 w-[200px]">
                 View Details
               </button>

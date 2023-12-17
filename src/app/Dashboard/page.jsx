@@ -1045,7 +1045,7 @@ const page = () => {
                         <br />
                         <input
                           type="text"
-                          className="w-[500px] h-[100px] mt-2 bg-[#E9EDF4] p-4 textarea textarea-lg rounded-lg "
+                          className="w-[500px] h-[150px] mt-2 bg-[#E9EDF4] p-4 textarea textarea-lg rounded-lg "
                           placeholder="Describe About Your Teaching Passion"
                           name="aboutTeaching"
                           onChange={handleAboutTeachingChange}

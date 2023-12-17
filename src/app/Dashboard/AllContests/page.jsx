@@ -13,7 +13,9 @@ const page = () => {
   let [isOpen, setIsOpen] = useState(false);
   const [inputType, setInputType] = useState("");
   const [enrolledContest, setEnrolledContest] = useState(null);
-  const [alreadyEnrolled, setAlreadyEnrolled] = useState(null || {} || []);
+  const [alreadyEnrolled, setAlreadyEnrolled] = useState(
+    false || null || {} || []
+  );
 
   useEffect(() => {
     const fetchData = async () => {
@@ -61,7 +63,7 @@ const page = () => {
       .then((res) => {
         try {
           let Token = res?.data?.success?.token || res?.data?.error?.token;
-          const alreadyEnrolled = res?.data?.error?.code;
+          const alreadyEnrolled = res?.data?.error?.status;
           setAlreadyEnrolled(alreadyEnrolled);
           localStorage?.setItem("access-token", Token);
           toast.error(res?.data?.error?.message);
@@ -206,19 +208,22 @@ const page = () => {
                   </div>
                   <div className="flex flex-col justify-center gap-2 mt-4 ">
                     <div>
-                      <button
-                        disabled={
-                          alreadyEnrolled && alreadyEnrolled.code === 422
-                        }
-                        onClick={() => handleEnroll(event)}
-                        className={`btn btn-outline bg-gradient-to-r from-[#cc009c] to-[#008080] text-white w-[130px] ${
-                          alreadyEnrolled === 422
-                            ? "btn-primary btn-outline TextColorDashboard "
-                            : ""
-                        }`}
-                      >
-                        Enroll
-                      </button>
+                      {alreadyEnrolled === false ? (
+                        <button
+                          onClick={() => handleEnroll(event)}
+                          className="btn btn-outline bg-gradient-to-r from-[#cc009c] to-[#008080] text-white w-[130px]"
+                        >
+                          Enroll
+                        </button>
+                      ) : (
+                        <button
+                          disabled={true}
+                          onClick={() => handleEnroll(event)}
+                          className="btn btn-outline btn-primary text-white w-[130px]"
+                        >
+                          Already Enrolled
+                        </button>
+                      )}
                     </div>
                     <div>
                       <button
@@ -240,11 +245,6 @@ const page = () => {
                         className="btn btn-outline bg-gradient-to-r from-[#cc009c] to-[#008080] text-white w-[130px]"
                       >
                         Participant
-                      </button>
-                    </div>
-                    <div>
-                      <button className="btn btn-outline bg-gradient-to-r from-[#cc009c] to-[#ff0000b7] text-white w-[130px]">
-                        Result
                       </button>
                     </div>
                   </div>

@@ -69,9 +69,9 @@ const Login = () => {
             .get(`/profile/my`)
             .then((profileRes) => {
               const Token = profileRes?.data?.success?.token;
-              localStorage.setItem("access-token", Token);
+              localStorage?.setItem("access-token", Token);
 
-              localStorage.setItem(
+              localStorage?.setItem(
                 "user",
                 JSON.stringify(profileRes?.data?.success?.data?.user)
               );

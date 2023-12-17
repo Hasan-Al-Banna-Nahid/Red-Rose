@@ -111,7 +111,6 @@ const page = () => {
 
   const handleNextQuestion = () => {
     clearInterval(timer);
-    // setRemainingTime(60);
     setRemainingTime(Math.floor(examDuration / totalQuestion) * totalQuestion);
     if (currentQuestion < totalQuestions - 1) {
       setCurrentQuestion((prevIndex) => prevIndex + 1);
@@ -128,7 +127,7 @@ const page = () => {
         setLoading(true);
         const res = await axiosSecure.get("/event/my");
         let Token = res?.data?.success?.token;
-        localStorage.setItem("access-token", Token);
+        localStorage?.setItem("access-token", Token);
         setEvents(res?.data?.success?.data?.events);
         setLoading(false);
       } catch (error) {
@@ -169,7 +168,6 @@ const page = () => {
       setParticipants(res?.data?.success?.data?.enrolls?.users);
     });
   };
-  let currentDate = new Date().toISOString().split("T")[0]; // Get the current date in the format "YYYY-MM-DD"
 
   const handleTakeExam = (id) => {
     axiosSecure.get(`/event/take-exam/${id}`).then((res) => {
@@ -472,9 +470,9 @@ const page = () => {
                                     handleSubmitContestExam(eventId);
                                   }}
                                   className={`bg-gradient-to-r from-[#cc009c] to-[#ff0000b7] btn btn-outline ${
-                                    uniqueNameCount === 1 && "w-full"
+                                    uniqueNameCount === 1 && "w-full mx-auto"
                                   } ${
-                                    uniqueNameCount > 1 && "w-[710px]"
+                                    uniqueNameCount > 1 && "w-[710px] mx-auto"
                                   } mx-auto text-white`}
                                 >
                                   Submit

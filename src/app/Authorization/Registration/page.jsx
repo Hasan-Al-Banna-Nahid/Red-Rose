@@ -82,7 +82,7 @@ const Registration = ({ customClassName }) => {
       })
       .then((res) => {
         const newToken = res.data.data.token;
-        localStorage.setItem("access-token", newToken);
+        localStorage?.setItem("access-token", newToken);
         if (res) {
           MySwal.fire(res.data.message);
         }

@@ -10,7 +10,7 @@ import toast, { Toaster } from "react-hot-toast";
 
 const Navbar = () => {
   const [isMenuOpen, setMenuOpen] = useState(false);
-  const user = JSON.parse(localStorage?.getItem("user"));
+  const user = JSON?.parse(localStorage?.getItem("user"));
   const dashboard = useRouter();
   const axiosSecure = useAxiosSecure();
   const toggleMenu = () => {

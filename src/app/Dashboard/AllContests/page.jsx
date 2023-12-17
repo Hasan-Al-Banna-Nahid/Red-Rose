@@ -22,7 +22,7 @@ const page = () => {
       try {
         const res = await axiosSecure.get("/event/all");
         let Token = res?.data?.success?.token;
-        localStorage.setItem("access-token", Token);
+        localStorage?.setItem("access-token", Token);
         setEvents(res?.data?.success?.data?.events);
       } catch (error) {
         console.error("Error fetching data:", error);

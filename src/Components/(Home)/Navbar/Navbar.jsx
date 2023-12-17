@@ -4,6 +4,9 @@ import { useEffect, useState } from "react";
 import "./style.css";
 import useAxiosSecure from "@/Components/Hooks/useAxiosSecure";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
+import avatar from "../../../../public/asset/avatar.png";
+import toast, { Toaster } from "react-hot-toast";
 
 const Navbar = () => {
   const [isMenuOpen, setMenuOpen] = useState(false);
@@ -16,15 +19,19 @@ const Navbar = () => {
   const handleUserToDashboard = () => {
     dashboard.push("/Dashboard");
   };
-  const handleMyProfile = () => {
-    axiosSecure.get("/my-profile").then((res) => {
-      console.log(res.data);
-      const token = res.data.data.token;
-      // localStorage.setItem("access-token", token);
+  const handleLogOut = () => {
+    axiosSecure.get("/logout").then((res) => {
+      if (res) {
+        localStorage?.removeItem("user");
+        localStorage?.removeItem("access-token");
+        toast.success("You Have been logged out");
+        window.location.reload();
+      }
     });
   };
   return (
     <div>
+      <Toaster />
       <div className="navbar  h-[40px] w-[1300px] mx-auto ">
         <div className="navbar-start ">
           <div className="dropdown">
@@ -118,12 +125,40 @@ const Navbar = () => {
         </div>
         <div className="navbar-end">
           {user ? (
-            <button
-              onClick={handleUserToDashboard}
-              className="btn btn-outline btn-success"
-            >
-              View Profile
-            </button>
+            <div className="dropdown dropdown-end ">
+              <div
+                tabIndex={0}
+                role="button"
+                className="btn btn-ghost btn-circle avatar"
+              >
+                <div className=" rounded-full">
+                  <Image
+                    alt="User Profile"
+                    src={avatar}
+                    width={800}
+                    height={800}
+                    className="bg-white"
+                  />
+                </div>
+              </div>
+              <ul
+                tabIndex={0}
+                className="mt-3 z-[1] p-12 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-[300px]"
+              >
+                <button
+                  onClick={handleUserToDashboard}
+                  className="btn  btn-success"
+                >
+                  View Profile
+                </button>
+                <button
+                  className="btn btn-outline btn-error my-6"
+                  onClick={handleLogOut}
+                >
+                  <a>Logout</a>
+                </button>
+              </ul>
+            </div>
           ) : (
             <Link
               href={"/Authorization/Login"}

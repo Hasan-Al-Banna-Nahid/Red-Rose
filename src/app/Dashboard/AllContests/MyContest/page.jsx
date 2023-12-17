@@ -588,19 +588,26 @@ const page = () => {
 
                 return (
                   <div className="card bg-white rounded-lg p-4">
-                    {showTakeExamButton ? (
+                    {isToday ? (
                       <Marquee>
-                        <h2 className=" TextColorOther font-bold text-center text-xl">
+                        <h2 className="TextColorOther font-bold text-center text-xl">
                           Participate In The Exam
                         </h2>
                       </Marquee>
-                    ) : (
+                    ) : !isToday && eventDate < today ? (
                       <Marquee>
-                        <h2 className=" TextColorOther font-bold text-center text-xl">
-                          Wait For The Exam Date,It's Coming
+                        <h2 className="TextColorOther font-bold text-center text-xl">
+                          Sorry, Exam Is Over
                         </h2>
                       </Marquee>
-                    )}
+                    ) : !isToday && eventDate > today ? (
+                      <Marquee>
+                        <h2 className="TextColorOther font-bold text-center text-xl">
+                          Wait For The Exam, It's Coming
+                        </h2>
+                      </Marquee>
+                    ) : null}
+
                     <div className="flex gap-8 justify-center items-center overflow-hidden">
                       <div className="card-body">
                         <h2 className="text-2xl font-bold text-blue-600 TextColorDashboard">

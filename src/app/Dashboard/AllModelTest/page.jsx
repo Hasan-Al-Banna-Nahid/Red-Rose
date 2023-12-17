@@ -114,14 +114,18 @@ const page = () => {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="w-[800px] min-h-full transform mx-auto overflow-hidden rounded-2xl bg-base-200 p-6 text-left align-middle shadow-xl transition-all">
+                <Dialog.Panel
+                  className={`w-[800px] min-h-full transform mx-auto overflow-hidden rounded-2xl bg-base-200 p-6 text-left align-middle shadow-xl transition-all   ${
+                    inputType === "participants" && "w-[1200px]"
+                  }`}
+                >
                   <Dialog.Title
                     as="h3"
                     className="text-lg font-medium leading-6 TextColorDashboard"
                   >
                     {inputType &&
                       inputType === "participants" &&
-                      " Participants"}
+                      " participants"}
                     {syllabus && inputType === "syllabus" && " Your Syllabus"}
                   </Dialog.Title>
                   <div className="mt-2 p-8 rounded-lg">
@@ -139,13 +143,13 @@ const page = () => {
                         inputType === "participants" &&
                         participants.map((participant) => {
                           return (
-                            <div className="bg-white  p-4    font-medium w-[250px]">
+                            <div className="bg-white  text-left p-8 rounded-lg border-2 border-purple-700 font-medium w-[400px]">
                               <h2>
                                 <span className="font-semibold"> Name :</span>{" "}
                                 <span
                                   className={`font-bold ${
                                     !participant === "text-red-800"
-                                  } TextColorOther  `}
+                                  } TextColorOther text-2xl `}
                                 >
                                   {participant
                                     ? participant?.name
@@ -153,8 +157,8 @@ const page = () => {
                                 </span>
                               </h2>
                               <h2>
-                                <span className="font-semibold"> Rr ID :</span>{" "}
-                                <span className="font-bold TextColorDashboard  mt-6">
+                                <span className="font-semibold"> ID :</span>{" "}
+                                <span className="font-bold TextColorDashboard text-[21px] mt-6">
                                   {participant.redrose_id}
                                 </span>
                               </h2>

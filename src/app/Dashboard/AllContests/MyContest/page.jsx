@@ -13,6 +13,7 @@ import { Transition, Dialog } from "@headlessui/react";
 import moment from "moment";
 import toast, { Toaster } from "react-hot-toast";
 import Marquee from "react-fast-marquee";
+import Swal from "sweetalert2";
 
 const page = () => {
   const axiosSecure = useAxiosSecure();
@@ -109,8 +110,10 @@ const page = () => {
   };
   const formattedTime = formatTime(remainingTime);
   const examDurationInMinutes = Math.floor(examDuration / 60);
+
   const handleNextQuestion = () => {
     clearInterval(timer);
+
     const examDurationInMinutes = Math.floor(examDuration / 60);
     const timePerQuestionInMinutes = Math.floor(
       examDurationInMinutes / totalQuestion
@@ -174,21 +177,46 @@ const page = () => {
       setParticipants(res?.data?.success?.data?.enrolls?.users);
     });
   };
+  console.log(events);
+  const swalExamTitle = `
+  <div style="color: black; font-size: 20px; font-weight: bold;">
+    <p>Do You Want To Take The Exam?</p>
 
+    <p> You will be able to
+    select an answer for each question only once. Your total exam time will
+    be shown after you confirm to take the exam.And Your Total Exam Time Is For All The Questions To Answer.</p>
+  </div>
+ 
+`;
   const handleTakeExam = (id) => {
-    axiosSecure.get(`/event/take-exam/${id}`).then((res) => {
-      setLoading(true);
+    Swal.fire({
+      title: `${swalExamTitle}`,
+      customClass: {
+        popup: "min-w-[1000px] mx-auto font-bold",
+      },
+      showCancelButton: true,
+      confirmButtonText: "Yes",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire("Welcome!", "", "");
+        axiosSecure.get(`/event/take-exam/${id}`).then((res) => {
+          setLoading(true);
 
-      let Token = res?.data?.success?.token;
-      localStorage?.setItem("access-token", Token);
-      setQuestion(res?.data?.success?.data?.question);
-      setTotalQuestion(res?.data?.success?.data?.totalquestion);
-      setExamDuration(res?.data?.success?.data?.event?.duration);
-      setCurrentQuestion(0);
-      setRemainingTime();
-      setRemainingTime(res?.data?.success?.data?.event?.duration);
+          let Token = res?.data?.success?.token;
+          localStorage?.setItem("access-token", Token);
+          setQuestion(res?.data?.success?.data?.question);
+          setTotalQuestion(res?.data?.success?.data?.totalquestion);
+          setExamDuration(res?.data?.success?.data?.event?.duration);
+          setCurrentQuestion(0);
+          setRemainingTime();
+          setRemainingTime(res?.data?.success?.data?.event?.duration);
 
-      setLoading(false);
+          setLoading(false);
+        });
+      } else if (result.isDismissed) {
+        Swal.fire("It's Ok,Be Prepare", "", "");
+        closeModal();
+      }
     });
   };
 
@@ -593,7 +621,19 @@ const page = () => {
                 const eventDate = moment(eventDateString).format("YYYY-MM-DD");
 
                 const isToday = eventDate === today;
+                let todayTime = new Date();
+                let formattedTodayTime = todayTime.toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  second: "2-digit",
+                  hour12: true,
+                });
+                let hour = todayTime.getHours();
+                let min = todayTime.getMinutes();
+                let sec = todayTime.getSeconds();
+                formattedTodayTime = `${hour} : ${min} :${sec} `;
 
+                console.log(formattedTodayTime);
                 const showTakeExamButton = isToday;
 
                 return (

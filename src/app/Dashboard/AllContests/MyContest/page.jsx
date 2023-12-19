@@ -27,7 +27,6 @@ const page = () => {
   const [results, setResults] = useState([]);
   let [isOpen, setIsOpen] = useState(false);
   let [loading, setLoading] = useState(false);
-  const timeForEachQuestion = examDuration / totalQuestion;
   const [remainingTime, setRemainingTime] = useState(Number);
   const [userAnswered, setUserAnswered] = useState(false);
   const [inputType, setInputType] = useState("");
@@ -59,26 +58,19 @@ const page = () => {
     (length) => length > 100
   );
 
-  if (isAnyOptionGreaterThan100) {
-    console.log("At least one option character length is greater than 100");
-  } else {
-    console.log("All option character lengths are 100 or less");
-  }
-
   const startCountDownTimer = useCallback(() => {
     setTimer(
       setInterval(() => {
-        setRemainingTime((prevTime) => Math.floor(prevTime - 1));
+        setRemainingTime((prevTime) => Math.max(0, prevTime - 1));
       }, 1000)
     );
   }, []);
   const handleRadioChange = (questionIds, options) => {
+    clearInterval(timer);
+
     setCurrentQuestion(questionIds[0]);
     setSelectedOptions((prevOptions) => {
-      // Check if _selectedOptions_exam_id is an array
       const isArrayOfIds = Array.isArray(prevOptions._selectedOptions_exam_id);
-      clearInterval(timer);
-      // If it's an array, include the current question ID
       const updatedOptions = {
         ...prevOptions,
         _selectedOptions_exam_id: isArrayOfIds
@@ -86,37 +78,51 @@ const page = () => {
           : [questionIds[0]],
         ans: [...prevOptions.ans, questionIds[0], options],
       };
-      startCountDownTimer();
       return updatedOptions;
     });
     setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
     setUserAnswered(true);
+
     handleNextQuestion();
   };
 
   useEffect(() => {
     clearInterval(timer);
-    if (remainingTime > 0 && currentQuestion <= totalQuestion) {
+    if (remainingTime >= 0 && currentQuestion <= totalQuestion) {
       startCountDownTimer();
     }
 
     if (remainingTime < 1 && currentQuestion < totalQuestion) {
-      clearInterval(timer);
       toast.error("Sorry, Your Time Out!");
       closeModal();
     }
 
     return () => clearInterval(timer);
   }, [remainingTime, currentQuestion, startCountDownTimer]);
-
+  const formatTime = (timeInSeconds) => {
+    const minutes = Math.floor(timeInSeconds / 60);
+    const seconds = timeInSeconds % 60;
+    return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(
+      2,
+      "0"
+    )}`;
+  };
+  const formattedTime = formatTime(remainingTime);
+  const examDurationInMinutes = Math.floor(examDuration / 60);
   const handleNextQuestion = () => {
     clearInterval(timer);
-    setRemainingTime(Math.floor(examDuration / totalQuestion) * totalQuestion);
+    const examDurationInMinutes = Math.floor(examDuration / 60);
+    const timePerQuestionInMinutes = Math.floor(
+      examDurationInMinutes / totalQuestion
+    );
+    setRemainingTime(
+      Math.max(0, remainingTime - timePerQuestionInMinutes * 60)
+    );
+
     if (currentQuestion < totalQuestions - 1) {
       setCurrentQuestion((prevIndex) => prevIndex + 1);
       setUserAnswered(false);
     } else {
-      // Handle the end of the quiz
       clearInterval(timer);
     }
   };
@@ -185,7 +191,7 @@ const page = () => {
       setLoading(false);
     });
   };
-  console.log(events.map((e) => typeof e.date));
+
   const handleResult = (event) => {
     axiosSecure.get(`/event/get-result/${event.id}`).then((res) => {
       let Token = res?.data?.success?.token;
@@ -276,7 +282,7 @@ const page = () => {
                   ${
                     inputType === "takeExam" &&
                     isAnyOptionGreaterThan100 &&
-                    "w-[1450px]"
+                    "w-[1460px]"
                   }
                   ${inputType === "participants" && "w-[1200px]"}
                   ${inputType === "syllabus" && "w-[800px]"}
@@ -314,7 +320,13 @@ const page = () => {
                         </div>
                         <div>
                           <h2 className="TextColorDashboard text-2xl">
-                            {`Exam Duration : ${examDuration}`}
+                            {`Exam Duration: ${
+                              examDurationInMinutes > 0
+                                ? `${examDurationInMinutes} minute${
+                                    examDurationInMinutes !== 1 ? "s" : ""
+                                  }`
+                                : `${examDuration} seconds`
+                            }`}
                           </h2>
                         </div>
                         <div>
@@ -395,7 +407,7 @@ const page = () => {
                                     </span>{" "}
                                     {question[currentQuestionIndex].name}
                                     <h2 className="TextColor2">
-                                      Remaining Time : {remainingTime} sec
+                                      Remaining Time : {formattedTime} sec
                                     </h2>
                                   </h3>
 

@@ -177,7 +177,7 @@ const page = () => {
       setParticipants(res?.data?.success?.data?.enrolls?.users);
     });
   };
-  console.log(events);
+
   const swalExamTitle = `
   <div style="color: black; font-size: 20px; font-weight: bold;">
     <p>Do You Want To Take The Exam?</p>
@@ -238,10 +238,10 @@ const page = () => {
       .then((res) => {
         let Token = res?.data?.success?.token || res?.data?.error?.token;
         localStorage?.setItem("access-token", Token);
-        console.log(res);
+
         if (res?.data?.success) {
           toast.success("Your Exam Is Successfully submitted");
-          console.log(res);
+
           setTimeout(() => {
             closeModal();
           }, 1500);
@@ -630,30 +630,55 @@ const page = () => {
                 });
                 let hour = todayTime.getHours();
                 let min = todayTime.getMinutes();
-                let sec = todayTime.getSeconds();
-                formattedTodayTime = `${hour} : ${min} :${sec} `;
 
-                console.log(formattedTodayTime);
-                const showTakeExamButton = isToday;
+                formattedTodayTime = `${hour % 12 || 12} : ${min} ${
+                  hour >= 12 ? "PM" : "AM"
+                }`;
+                let eventTime = event.time;
+                let [hours, minutes] = eventTime.split(":");
 
+                let currentTime = new Date();
+                currentTime.setHours(hours);
+                currentTime.setMinutes(minutes);
+
+                let formattedEventTime = currentTime.toLocaleString("en-US", {
+                  hour: "numeric",
+                  minute: "2-digit",
+                  hour12: true,
+                });
+
+                // const showTakeExamButton =
+                //   isToday && formattedEventTime >= formattedTodayTime;
+                const showTakeExamButton = isToday && event.status === "start";
                 return (
                   <div className="card bg-white rounded-lg p-4">
-                    {isToday ? (
+                    {isToday && formattedEventTime == formattedTodayTime ? (
                       <Marquee>
                         <h2 className="TextColorOther font-bold text-center text-xl">
                           Participate In The Exam
                         </h2>
                       </Marquee>
-                    ) : !isToday && eventDate < today ? (
+                    ) : !isToday &&
+                      eventDate < today &&
+                      formattedEventTime != formattedTodayTime ? (
                       <Marquee>
                         <h2 className="TextColorOther font-bold text-center text-xl">
-                          Sorry, Exam Is Over
+                          Sorry, Exam Is Over At {eventDate} and The Time Was{" "}
+                          {formattedEventTime}
                         </h2>
                       </Marquee>
-                    ) : !isToday && eventDate > today ? (
+                    ) : !isToday ||
+                      (eventDate > today &&
+                        formattedEventTime != formattedTodayTime) ? (
                       <Marquee>
                         <h2 className="TextColorOther font-bold text-center text-xl">
-                          Wait For The Exam, It's Coming
+                          Wait For The Exam, It's Coming in {formattedEventTime}
+                        </h2>
+                      </Marquee>
+                    ) : isToday && formattedEventTime > formattedTodayTime ? (
+                      <Marquee>
+                        <h2 className="TextColorOther font-bold text-center text-xl">
+                          Exam Is Running
                         </h2>
                       </Marquee>
                     ) : null}

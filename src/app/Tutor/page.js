@@ -21,9 +21,13 @@ const Tutor = () => {
   // console.log(teacherData);
   const [teacherData, setTeacherData] = useState([]);
   useEffect(() => {
-    fetch("http://localhost:5000/tutor")
-      .then((res) => res.json())
-      .then((data) => setTeacherData(data));
+    try {
+      fetch("http://localhost:5000/tutor")
+        .then((res) => res.json())
+        .then((data) => setTeacherData(data));
+    } catch (error) {
+      console.log(error);
+    }
   }, []);
   return (
     <div>

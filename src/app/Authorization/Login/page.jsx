@@ -2,14 +2,10 @@
 "use client";
 import React, { useContext, useState } from "react";
 import axios from "axios";
-
-// import "./Login.css";
-// import { useLocation, useNavigate } from "react-router-dom";
 import Link from "next/link";
 
 import Swal from "sweetalert2";
 import { FaGoogle } from "react-icons/fa";
-import { AuthContext } from "../AuthProvider";
 
 import { FaToggleOn, FaToggleOff } from "react-icons/fa";
 import { useRouter } from "next/navigation";
@@ -34,22 +30,6 @@ const Login = () => {
   const navigate = useRouter();
   const profile = useRouter();
 
-  const { accessLogin, googleLogin } = useContext(AuthContext);
-  const handleGoogleLogin = () => {
-    googleLogin().then((result) => {
-      //   fetch("https://vedhak-iamnahid591998-gmailcom.vercel.app/users", {
-      //     method: "POST",
-      //     headers: {
-      //       "Content-Type": "application/json",
-      //     },
-      //     body: JSON.stringify({
-      //       name: result.user.displayName,
-      //       email: result.user.email,
-      //     }),
-      //   });
-    });
-    navigate(from, { replace: true });
-  };
   const handleLogin = async (e) => {
     e.preventDefault();
     const form = e.target;

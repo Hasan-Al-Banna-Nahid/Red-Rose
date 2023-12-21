@@ -3,7 +3,6 @@
 import { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import Link from "next/link";
-import { AuthContext } from "../AuthProvider";
 import withReactContent from "sweetalert2-react-content";
 import Swal from "sweetalert2";
 import { FaGoogle } from "react-icons/fa";
@@ -13,10 +12,6 @@ import Navbar from "@/Components/(Home)/Navbar/Navbar";
 import useAxiosSecure from "@/Components/Hooks/useAxiosSecure";
 
 const Registration = ({ customClassName }) => {
-  //   const [isShow, setIsShow] = useState(false);
-  //   const handlePasswordShow = () => {
-  //     setIsShow(!isShow);
-  //   };
   const {
     register,
     handleSubmit,
@@ -30,26 +25,8 @@ const Registration = ({ customClassName }) => {
 
   let from = Location.state?.from?.pathname || "/";
   const navigate = useRouter();
-  const { registerWIthEmailAndPassword, updateUser, googleLogin } =
-    useContext(AuthContext);
   const [errorMessage, setErrorMessage] = useState("");
   const MySwal = withReactContent(Swal);
-
-  const handleGoogleLogin = () => {
-    googleLogin().then((result) => {
-      fetch("https://vedhak-iamnahid591998-gmailcom.vercel.app/users", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: result.user.displayName,
-          email: result.user.email,
-        }),
-      });
-    });
-    navigate(from, { replace: true });
-  };
 
   const onSubmit = async (data, e) => {
     const form = e.target;
@@ -59,21 +36,6 @@ const Registration = ({ customClassName }) => {
       setErrorMessage("Password Did Not Match");
       return;
     }
-
-    // registerWIthEmailAndPassword(data.email, data.password).then((result) => {
-    //   console.log(result.user);
-    //   updateUser(data.name, data.photo);
-    //   MySwal.fire("Good job!", "You Account Is Created!", "success");
-    //   reset();
-    //   // navigate.push("/login");
-    //   // fetch("https://vedhak-iamnahid591998-gmailcom.vercel.app/users", {
-    //   //   method: "POST",
-    //   //   headers: {
-    //   //     "Content-Type": "application/json",
-    //   //   },
-    //   //   body: JSON.stringify({ name: data.name, email: data.email }),
-    //   // });
-    // });
     axiosSecure
       .post(`/register`, {
         name: data.name,
@@ -229,15 +191,6 @@ const Registration = ({ customClassName }) => {
             </div>
             <div className={`mx-auto w-[70px] my-4 relative`}>
               <div className="border-red-600 border-2 w-[300px] absolute left-[-100px]"></div>
-              <div>
-                <button onClick={handleGoogleLogin} className="my-6">
-                  <FaGoogle
-                    className={`${
-                      navbar.pathname === "/signUp" ? "text-6xl" : "text-5xl"
-                    }  hover:text-[#F4B400]`}
-                  />
-                </button>
-              </div>
             </div>
             <div>
               {window.location.pathname === "/Authorization/Registration" && (

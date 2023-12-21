@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import DashboardNavbar from "../DashboardHeader/DashboardNavbar";
 import Image from "next/image";
-import photo from "../../../../public/asset/banner.webp";
+import photo from "../../../../public/asset/2 (3).png";
 import Link from "next/link";
 import useAxiosSecureWithoutToken from "@/Components/Hooks/useAxiosSecureWithoutToken";
 
